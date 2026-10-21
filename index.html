@@ -1568,36 +1568,68 @@ function sendNotif(title, body) {
   }
 }
 function scheduleLocalReminder() {
-  if(!config.notifEnabled) return;
-  const [h,m]=config.reminderTime.split(':').map(Number);
-  const now=new Date(), target=new Date();
-  target.setHours(h,m,0,0);
-  if(target<=now) target.setDate(target.getDate()+1);
-  if(window._reminderTimeout) clearTimeout(window._reminderTimeout);
-  window._reminderTimeout=setTimeout(()=>{ checkAndNotify(); scheduleLocalReminder(); }, Math.min(target-now, 2147483647));
+  if (!config.notifEnabled) return;
+  const [h, m] = config.reminderTime.split(':').map(Number);
+  const now = new Date(), target = new Date();
+  target.setHours(h, m, 0, 0);
+  if (target <= now) target.setDate(target.getDate() + 1);
+  const delay = target - now;
+
+  // Timer JS (funciona mientras la app está en memoria)
+  if (window._reminderTimeout) clearTimeout(window._reminderTimeout);
+  window._reminderTimeout = setTimeout(() => {
+    checkAndNotify();
+    scheduleLocalReminder();
+  }, Math.min(delay, 2147483647));
+
+  // También enviar al SW para que funcione cuando la app está cerrada
+  navigator.serviceWorker?.ready.then(reg => {
+    if (reg.active) {
+      const urgent = payments.filter(p => {
+        const d = daysUntil(p.dueDate);
+        return d !== null && d <= config.warnDays;
+      });
+      const body = urgent.length > 0
+        ? `Tienes ${urgent.length} pago${urgent.length > 1 ? 's' : ''} próximo${urgent.length > 1 ? 's' : ''} a vencer.`
+        : 'Revisa tus próximos vencimientos.';
+
+      reg.active.postMessage({ type: 'SCHEDULE_REMINDER', delay, body });
+    }
+  }).catch(() => {});
 }
 
 /* ==============================================
    SERVICE WORKER
 =============================================== */
 function registerServiceWorker() {
-  if(!('serviceWorker' in navigator)) return;
-  const sw=`
-const CACHE='mis-pagos-v2';
-self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/']))); self.skipWaiting(); });
-self.addEventListener('activate',e=>{ e.waitUntil(clients.claim()); });
-self.addEventListener('fetch',e=>{ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))); });
-self.addEventListener('message',e=>{
-  if(e.data?.type==='SHOW_NOTIFICATION'){
-    self.registration.showNotification(e.data.title,{ body:e.data.body, tag:e.data.tag||'mis-pagos', vibrate:[200,100,200], data:{url:self.location.origin} });
-  }
-});
-self.addEventListener('notificationclick',e=>{
-  e.notification.close();
-  e.waitUntil(clients.matchAll({type:'window'}).then(l=>{ if(l.length>0) return l[0].focus(); return clients.openWindow(e.notification.data?.url||'/'); }));
-});`;
-  const url=URL.createObjectURL(new Blob([sw],{type:'application/javascript'}));
-  navigator.serviceWorker.register(url,{scope:'/'}).catch(()=>{});
+  if (!('serviceWorker' in navigator)) return;
+
+  navigator.serviceWorker.register('./sw.js', { scope: './' })
+    .then(reg => {
+      console.log('SW registrado correctamente:', reg.scope);
+
+      // Periodic Sync para Android Chrome (si está disponible)
+      if ('periodicSync' in reg) {
+        navigator.permissions.query({ name: 'periodic-background-sync' })
+          .then(status => {
+            if (status.state === 'granted') {
+              reg.periodicSync.register('mis-pagos-daily', { minInterval: 86400000 })
+                .catch(() => {});
+            }
+          }).catch(() => {});
+      }
+    })
+    .catch(err => console.warn('SW no pudo registrarse:', err));
+}
+
+/* Envía el recordatorio al SW con el delay exacto hasta la hora programada */
+function scheduleReminderViaSW(delay, body) {
+  if (!navigator.serviceWorker?.controller) return;
+  navigator.serviceWorker.controller.postMessage({
+    type:  'SCHEDULE_REMINDER',
+    delay: delay,
+    body:  body
+  });
 }
 
 /* ==============================================
