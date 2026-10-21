@@ -3,66 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0f1117" />
+  <meta name="theme-color" content="#0a0e1a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Mis Pagos" />
   <meta name="description" content="Agenda inteligente de control de pagos y vencimientos" />
   <title>Mis Pagos</title>
-
-  <!-- PWA Manifest inline via link -->
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="apple-touch-icon" href="icon.svg" />
-
   <style>
-    /* =============================================
-       VARIABLES Y RESET
-    ============================================= */
+    /* ============================
+       FUENTE GOOGLE (inline import)
+    ============================ */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    /* ============================
+       VARIABLES
+    ============================ */
     :root {
-      --bg-primary:     #0f1117;
-      --bg-secondary:   #1a1d27;
-      --bg-card:        #1e2132;
-      --bg-card-hover:  #252840;
-      --bg-input:       #252840;
-      --border:         #2e3250;
-      --border-focus:   #4f6ef7;
+      --bg:          #0a0e1a;
+      --bg2:         #111526;
+      --bg3:         #161b2e;
+      --bg4:         #1c2138;
+      --border:      #252d4a;
+      --border2:     #2e3a5e;
 
-      --text-primary:   #f0f2ff;
-      --text-secondary: #8b91b5;
-      --text-muted:     #555a7a;
+      --txt1:        #eef0ff;
+      --txt2:        #8892b4;
+      --txt3:        #4a5272;
 
-      --accent:         #4f6ef7;
-      --accent-glow:    rgba(79, 110, 247, 0.25);
+      --blue:        #4f7cff;
+      --blue2:       #6d5df5;
+      --blue-glow:   rgba(79,124,255,0.22);
+      --blue-glow2:  rgba(79,124,255,0.08);
 
-      --green:          #22c55e;
-      --green-bg:       rgba(34, 197, 94, 0.12);
-      --yellow:         #eab308;
-      --yellow-bg:      rgba(234, 179, 8, 0.12);
-      --orange:         #f97316;
-      --orange-bg:      rgba(249, 115, 22, 0.12);
-      --red:            #ef4444;
-      --red-bg:         rgba(239, 68, 68, 0.12);
+      --green:       #00e096;
+      --green-dark:  #00b876;
+      --green-bg:    rgba(0,224,150,0.1);
+      --yellow:      #ffd60a;
+      --yellow-bg:   rgba(255,214,10,0.1);
+      --orange:      #ff8c42;
+      --orange-bg:   rgba(255,140,66,0.1);
+      --red:         #ff4d6d;
+      --red-bg:      rgba(255,77,109,0.1);
 
-      --radius-sm:      8px;
-      --radius-md:      14px;
-      --radius-lg:      20px;
-      --radius-xl:      28px;
-
-      --shadow-card:    0 4px 24px rgba(0,0,0,0.4);
-      --shadow-float:   0 8px 32px rgba(0,0,0,0.6);
-
-      --font:           'Segoe UI', system-ui, -apple-system, sans-serif;
-      --nav-h:          64px;
-      --fab-size:       56px;
+      --r-sm:  10px;
+      --r-md:  16px;
+      --r-lg:  22px;
+      --r-xl:  30px;
+      --nav-h: 68px;
+      --font:  'Inter', system-ui, sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     html, body {
       height: 100%;
-      background: var(--bg-primary);
-      color: var(--text-primary);
+      background: var(--bg);
+      color: var(--txt1);
       font-family: var(--font);
       font-size: 15px;
       line-height: 1.5;
@@ -70,915 +69,785 @@
       overflow-x: hidden;
     }
 
-    /* =============================================
-       SCROLL BAR
-    ============================================= */
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
 
-    /* =============================================
-       LAYOUT
-    ============================================= */
-    #app {
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+    /* ============================
+       SPLASH
+    ============================ */
+    #splash {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(160deg, #040818 0%, #0d2060 40%, #1a6fd4 75%, #22c97a 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    #splash.hide { opacity: 0; transform: scale(1.06); pointer-events: none; }
+
+    .splash-ring {
       position: relative;
+      width: 180px; height: 180px;
+      animation: splashPop 0.8s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .splash-ring::before {
+      content: '';
+      position: absolute; inset: -12px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+      animation: spin 3s linear infinite;
+    }
+    .splash-ring::after {
+      content: '';
+      position: absolute; inset: -20px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.08);
+    }
+    .splash-logo {
+      width: 180px; height: 180px;
+      border-radius: 40px;
+      filter: drop-shadow(0 0 30px rgba(79,124,255,0.5));
+    }
+    .splash-title {
+      font-size: 34px; font-weight: 900;
+      color: #fff; letter-spacing: 4px;
+      margin-top: 28px;
+      animation: fadeUp 0.6s 0.4s ease both;
+      text-shadow: 0 0 30px rgba(79,124,255,0.6);
+    }
+    .splash-sub {
+      font-size: 13px; color: rgba(255,255,255,0.6);
+      margin-top: 8px; letter-spacing: 1.5px;
+      animation: fadeUp 0.6s 0.6s ease both;
+    }
+    .splash-bar {
+      width: 160px; height: 3px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 99px;
+      margin-top: 44px;
+      overflow: hidden;
+      animation: fadeUp 0.4s 0.8s ease both;
+    }
+    .splash-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f7cff, #22c97a);
+      border-radius: 99px;
+      animation: barLoad 1.8s 0.9s ease forwards;
+      width: 0%;
+    }
+    @keyframes splashPop {
+      from { transform: scale(0.2) rotate(-20deg); opacity: 0; }
+      to   { transform: scale(1)   rotate(0deg);   opacity: 1; }
+    }
+    @keyframes fadeUp {
+      from { transform: translateY(16px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    @keyframes barLoad {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ============================
+       LAYOUT APP
+    ============================ */
+    #app {
+      max-width: 480px; margin: 0 auto;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
     }
 
-    /* =============================================
+    /* ============================
        HEADER
-    ============================================= */
+    ============================ */
     .header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--bg-primary);
-      padding: 18px 20px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,14,26,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 16px 20px 14px;
+      display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border);
     }
-
-    .header-brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .header-brand { display: flex; align-items: center; gap: 12px; }
     .header-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 0 16px rgba(30, 159, 212, 0.4);
+      width: 42px; height: 42px;
+      border-radius: 12px; overflow: hidden;
+      box-shadow: 0 0 20px rgba(34,201,122,0.3), 0 0 40px rgba(79,124,255,0.2);
       flex-shrink: 0;
+      animation: logoPulse 3s ease-in-out infinite;
     }
-
-    .header-logo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .header-logo img { width: 100%; height: 100%; object-fit: cover; }
+    @keyframes logoPulse {
+      0%,100% { box-shadow: 0 0 16px rgba(34,201,122,0.3), 0 0 32px rgba(79,124,255,0.15); }
+      50%      { box-shadow: 0 0 24px rgba(34,201,122,0.5), 0 0 48px rgba(79,124,255,0.25); }
     }
-
     .header-title {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
+      font-size: 20px; font-weight: 800; letter-spacing: -0.4px;
+      background: linear-gradient(90deg, #fff 60%, #4f7cff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
-    .header-subtitle {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: -2px;
-    }
-
+    .header-subtitle { font-size: 11px; color: var(--txt3); margin-top: -1px; }
     .header-bell {
-      width: 38px;
-      height: 38px;
-      border: 1px solid var(--border);
+      width: 40px; height: 40px;
+      border: 1px solid var(--border2);
       border-radius: 50%;
-      background: var(--bg-card);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.2s;
-      font-size: 17px;
-      position: relative;
+      background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; position: relative;
+      transition: all 0.25s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
     }
-
-    .header-bell:hover { background: var(--bg-card-hover); }
-
+    .header-bell:active { transform: scale(0.9); }
     .notif-badge {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 8px;
-      height: 8px;
-      background: var(--red);
-      border-radius: 50%;
-      border: 2px solid var(--bg-primary);
-      display: none;
+      position: absolute; top: 7px; right: 7px;
+      width: 8px; height: 8px;
+      background: var(--red); border-radius: 50%;
+      border: 2px solid var(--bg); display: none;
+      animation: badgePulse 1.5s ease-in-out infinite;
+    }
+    .notif-badge.visible { display: block; }
+    @keyframes badgePulse {
+      0%,100% { transform: scale(1); }
+      50%      { transform: scale(1.3); }
     }
 
-    .notif-badge.visible { display: block; }
-
-    /* =============================================
-       NAVEGACIÓN POR TABS
-    ============================================= */
+    /* ============================
+       TABS
+    ============================ */
     .tabs {
       display: flex;
-      background: var(--bg-primary);
-      padding: 0 16px;
-      gap: 4px;
+      background: rgba(10,14,26,0.92);
+      backdrop-filter: blur(16px);
+      padding: 0 12px;
       border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 73px;
-      z-index: 99;
+      position: sticky; top: 73px; z-index: 99;
     }
-
     .tab-btn {
-      flex: 1;
-      padding: 12px 6px;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
+      flex: 1; padding: 11px 4px;
+      background: none; border: none;
+      color: var(--txt3); font-size: 11px; font-weight: 700;
       cursor: pointer;
       border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      letter-spacing: 0.2px;
+      transition: all 0.25s;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 3px;
+      letter-spacing: 0.3px; font-family: var(--font);
     }
-
-    .tab-btn .tab-icon { font-size: 18px; }
-
-    .tab-btn.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
-
+    .tab-btn .tab-icon { font-size: 20px; transition: transform 0.25s; }
+    .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
+    .tab-btn.active .tab-icon { transform: scale(1.15); }
     .tab-badge {
-      background: var(--red);
-      color: #fff;
-      font-size: 9px;
-      font-weight: 700;
-      padding: 1px 5px;
-      border-radius: 99px;
-      min-width: 16px;
-      text-align: center;
-      display: none;
+      background: var(--red); color: #fff;
+      font-size: 9px; font-weight: 800;
+      padding: 2px 6px; border-radius: 99px;
+      min-width: 18px; text-align: center; display: none;
+      animation: badgePulse 1.5s ease-in-out infinite;
     }
-
     .tab-badge.visible { display: inline-block; }
 
-    /* =============================================
-       CONTENIDO DE VISTAS
-    ============================================= */
-    .views { flex: 1; overflow-y: auto; padding-bottom: 90px; }
-
+    /* ============================
+       VISTAS
+    ============================ */
+    .views { flex: 1; overflow-y: auto; padding-bottom: 88px; }
     .view { display: none; padding: 16px; }
-    .view.active { display: block; }
+    .view.active { display: block; animation: viewIn 0.3s ease both; }
+    @keyframes viewIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-    /* =============================================
-       RESUMEN / DASHBOARD HEADER
-    ============================================= */
+    /* ============================
+       SUMMARY CARDS (dashboard)
+    ============================ */
     .summary-cards {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; margin-bottom: 20px;
     }
-
     .summary-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
+      border-radius: var(--r-md);
+      padding: 16px;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s;
     }
-
-    .summary-card .sc-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .summary-card .sc-value {
-      font-size: 22px;
-      font-weight: 700;
-      margin-top: 4px;
-      letter-spacing: -0.5px;
-    }
-
-    .summary-card .sc-sub {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .sc-urgent .sc-value { color: var(--red); }
-    .sc-total .sc-value { color: var(--accent); }
-
-    /* =============================================
-       SECCIÓN CON TÍTULO
-    ============================================= */
-    .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .section-title::after {
+    .summary-card:active { transform: scale(0.97); }
+    .summary-card::after {
       content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .sc-urgent {
+      background: linear-gradient(135deg, #1a0a14, #2d0f1e);
+      border: 1px solid rgba(255,77,109,0.3);
+      box-shadow: 0 4px 20px rgba(255,77,109,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .sc-total {
+      background: linear-gradient(135deg, #0a1228, #0f1e45);
+      border: 1px solid rgba(79,124,255,0.3);
+      box-shadow: 0 4px 20px rgba(79,124,255,0.12), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .sc-label {
+      font-size: 10px; color: var(--txt3);
+      font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+    }
+    .sc-value {
+      font-size: 26px; font-weight: 900;
+      margin-top: 6px; letter-spacing: -0.8px;
+    }
+    .sc-urgent .sc-value { color: var(--red); text-shadow: 0 0 20px rgba(255,77,109,0.4); }
+    .sc-total  .sc-value { color: var(--blue); text-shadow: 0 0 20px rgba(79,124,255,0.4); }
+    .sc-sub { font-size: 10px; color: var(--txt3); margin-top: 3px; }
+
+    /* ============================
+       SECTION TITLE
+    ============================ */
+    .section-title {
+      font-size: 11px; font-weight: 800;
+      color: var(--txt3); text-transform: uppercase;
+      letter-spacing: 0.8px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
     }
 
-    /* =============================================
+    /* ============================
        TARJETAS DE PAGO
-    ============================================= */
+    ============================ */
     .payments-list { display: flex; flex-direction: column; gap: 10px; }
 
     .payment-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
+      border-radius: var(--r-md);
+      padding: 15px 16px;
       cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: cardIn 0.4s ease both;
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0)    scale(1); }
+    }
+    .payment-card:active { transform: scale(0.97); }
+
+    /* Gradientes por estado */
+    .payment-card.status-safe {
+      background: linear-gradient(135deg, #0d1a14 0%, #0f2019 100%);
+      border: 1px solid rgba(0,224,150,0.2);
+      box-shadow: 0 4px 20px rgba(0,224,150,0.06);
+    }
+    .payment-card.status-warn {
+      background: linear-gradient(135deg, #1a1500 0%, #201a00 100%);
+      border: 1px solid rgba(255,214,10,0.25);
+      box-shadow: 0 4px 20px rgba(255,214,10,0.07);
+    }
+    .payment-card.status-critical {
+      background: linear-gradient(135deg, #1a0d00 0%, #201200 100%);
+      border: 1px solid rgba(255,140,66,0.3);
+      box-shadow: 0 4px 20px rgba(255,140,66,0.1);
+    }
+    .payment-card.status-overdue {
+      background: linear-gradient(135deg, #1a0008 0%, #200010 100%);
+      border: 1px solid rgba(255,77,109,0.3);
+      box-shadow: 0 4px 20px rgba(255,77,109,0.1);
+      animation: cardIn 0.4s ease both, overdueGlow 2s ease-in-out infinite;
+    }
+    @keyframes overdueGlow {
+      0%,100% { box-shadow: 0 4px 20px rgba(255,77,109,0.1); }
+      50%      { box-shadow: 0 4px 28px rgba(255,77,109,0.22), 0 0 0 1px rgba(255,77,109,0.1); }
     }
 
+    /* Barra lateral de estado */
     .payment-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      border-radius: 99px;
+      content: ''; position: absolute;
+      left: 0; top: 12px; bottom: 12px;
+      width: 3px; border-radius: 99px;
     }
+    .status-safe::before     { background: linear-gradient(180deg, var(--green), var(--green-dark)); box-shadow: 0 0 8px var(--green); }
+    .status-warn::before     { background: linear-gradient(180deg, #ffd60a, #f0b800); box-shadow: 0 0 8px var(--yellow); }
+    .status-critical::before { background: linear-gradient(180deg, var(--orange), #e06000); box-shadow: 0 0 8px var(--orange); }
+    .status-overdue::before  { background: linear-gradient(180deg, var(--red), #cc0030); box-shadow: 0 0 8px var(--red); }
 
-    .payment-card.status-safe::before   { background: var(--green); }
-    .payment-card.status-warn::before   { background: var(--yellow); }
-    .payment-card.status-critical::before { background: var(--orange); }
-    .payment-card.status-overdue::before  { background: var(--red); }
-
-    .payment-card:active { transform: scale(0.985); }
+    /* Brillo sutil en la esquina superior */
+    .payment-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 0; right: 0; height: 1px;
+      opacity: 0.3;
+    }
+    .status-safe::after     { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+    .status-warn::after     { background: linear-gradient(90deg, transparent, var(--yellow), transparent); }
+    .status-critical::after { background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+    .status-overdue::after  { background: linear-gradient(90deg, transparent, var(--red), transparent); }
 
     .card-top {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 8px;
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 10px;
     }
-
-    .card-left { display: flex; align-items: flex-start; gap: 10px; flex: 1; min-width: 0; }
+    .card-left { display: flex; align-items: flex-start; gap: 12px; flex: 1; min-width: 0; }
 
     .card-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-sm);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+      transition: transform 0.2s;
     }
-
-    .payment-card.status-safe   .card-icon { background: var(--green-bg); }
-    .payment-card.status-warn   .card-icon { background: var(--yellow-bg); }
-    .payment-card.status-critical .card-icon { background: var(--orange-bg); }
-    .payment-card.status-overdue  .card-icon { background: var(--red-bg); }
+    .payment-card:active .card-icon { transform: scale(0.9); }
+    .status-safe     .card-icon { background: linear-gradient(135deg, rgba(0,224,150,0.15), rgba(0,224,150,0.05)); border: 1px solid rgba(0,224,150,0.2); }
+    .status-warn     .card-icon { background: linear-gradient(135deg, rgba(255,214,10,0.15), rgba(255,214,10,0.05)); border: 1px solid rgba(255,214,10,0.2); }
+    .status-critical .card-icon { background: linear-gradient(135deg, rgba(255,140,66,0.15), rgba(255,140,66,0.05)); border: 1px solid rgba(255,140,66,0.2); }
+    .status-overdue  .card-icon { background: linear-gradient(135deg, rgba(255,77,109,0.15), rgba(255,77,109,0.05)); border: 1px solid rgba(255,77,109,0.2); }
 
     .card-info { flex: 1; min-width: 0; }
-
     .card-name {
-      font-size: 15px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 15px; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-
-    .card-category {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .card-category { font-size: 11px; color: var(--txt3); margin-top: 2px; }
 
     .card-right { text-align: right; flex-shrink: 0; }
-
-    .card-amount {
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-
-    .card-due {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
+    .card-amount { font-size: 17px; font-weight: 800; letter-spacing: -0.4px; }
+    .status-safe     .card-amount { color: var(--green); }
+    .status-warn     .card-amount { color: var(--yellow); }
+    .status-critical .card-amount { color: var(--orange); }
+    .status-overdue  .card-amount { color: var(--red); }
+    .card-due { font-size: 10px; color: var(--txt3); margin-top: 3px; }
 
     .card-bottom {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 12px;
+      display: flex; align-items: center;
+      justify-content: space-between; margin-top: 12px;
     }
 
     .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 99px;
-      font-size: 11px;
-      font-weight: 700;
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 99px;
+      font-size: 11px; font-weight: 700;
+    }
+    .status-pill .dot { width: 5px; height: 5px; border-radius: 50%; }
+    .status-safe     .status-pill { background: rgba(0,224,150,0.12);  color: var(--green);  border: 1px solid rgba(0,224,150,0.2); }
+    .status-safe     .status-pill .dot { background: var(--green); box-shadow: 0 0 4px var(--green); }
+    .status-warn     .status-pill { background: rgba(255,214,10,0.12); color: var(--yellow); border: 1px solid rgba(255,214,10,0.2); }
+    .status-warn     .status-pill .dot { background: var(--yellow); box-shadow: 0 0 4px var(--yellow); }
+    .status-critical .status-pill { background: rgba(255,140,66,0.12); color: var(--orange); border: 1px solid rgba(255,140,66,0.2); }
+    .status-critical .status-pill .dot { background: var(--orange); box-shadow: 0 0 4px var(--orange); }
+    .status-overdue  .status-pill { background: rgba(255,77,109,0.12); color: var(--red);    border: 1px solid rgba(255,77,109,0.2); }
+    .status-overdue  .status-pill .dot { background: var(--red); box-shadow: 0 0 4px var(--red); animation: dotBlink 1s ease-in-out infinite; }
+    @keyframes dotBlink {
+      0%,100% { opacity: 1; } 50% { opacity: 0.3; }
     }
 
-    .status-pill .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-    }
-
-    .status-safe .status-pill     { background: var(--green-bg);  color: var(--green); }
-    .status-safe .status-pill .dot { background: var(--green); }
-    .status-warn .status-pill     { background: var(--yellow-bg); color: var(--yellow); }
-    .status-warn .status-pill .dot { background: var(--yellow); }
-    .status-critical .status-pill { background: var(--orange-bg); color: var(--orange); }
-    .status-critical .status-pill .dot { background: var(--orange); }
-    .status-overdue .status-pill  { background: var(--red-bg);    color: var(--red); }
-    .status-overdue .status-pill .dot { background: var(--red); }
-
-    .card-actions {
-      display: flex;
-      gap: 6px;
-    }
-
+    /* Botones de acción en tarjeta */
+    .card-actions { display: flex; gap: 6px; }
     .btn-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--bg-input);
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 15px;
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      border: 1px solid var(--border2);
+      background: rgba(255,255,255,0.04);
+      color: var(--txt2);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 15px;
       transition: all 0.2s;
-    }
-
-    .btn-icon:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-
-    .btn-icon.pay-btn:hover { background: var(--green-bg); color: var(--green); border-color: var(--green); }
-    .btn-icon.del-btn:hover { background: var(--red-bg);   color: var(--red);   border-color: var(--red); }
-
-    /* =============================================
-       ESTADO VACÍO
-    ============================================= */
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 60px 20px;
-      text-align: center;
-      color: var(--text-muted);
-      gap: 12px;
-    }
-
-    .empty-state .empty-icon { font-size: 52px; opacity: 0.5; }
-    .empty-state h3 { font-size: 17px; color: var(--text-secondary); font-weight: 600; }
-    .empty-state p { font-size: 13px; line-height: 1.6; }
-
-    /* =============================================
-       FORMULARIO - MODAL
-    ============================================= */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
       backdrop-filter: blur(4px);
-      z-index: 500;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
     }
+    .btn-icon:active { transform: scale(0.85); }
+    .btn-icon.pay-btn { border-color: rgba(0,224,150,0.3); }
+    .btn-icon.pay-btn:active { background: rgba(0,224,150,0.15); color: var(--green); }
+    .btn-icon.edit-btn:active { background: rgba(79,124,255,0.15); color: var(--blue); border-color: rgba(79,124,255,0.3); }
+    .btn-icon.del-btn { border-color: rgba(255,77,109,0.2); }
+    .btn-icon.del-btn:active { background: rgba(255,77,109,0.15); color: var(--red); }
 
+    /* ============================
+       EMPTY STATE
+    ============================ */
+    .empty-state {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 60px 20px; text-align: center; gap: 12px;
+    }
+    .empty-icon { font-size: 56px; animation: float 3s ease-in-out infinite; }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-8px); }
+    }
+    .empty-state h3 { font-size: 17px; color: var(--txt2); font-weight: 700; }
+    .empty-state p  { font-size: 13px; color: var(--txt3); line-height: 1.7; }
+
+    /* ============================
+       MODAL
+    ============================ */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      z-index: 500; display: none;
+      align-items: flex-end; justify-content: center;
+    }
     .modal-overlay.open { display: flex; }
-
     .modal {
-      background: var(--bg-secondary);
-      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-      width: 100%;
-      max-width: 480px;
-      max-height: 92vh;
-      overflow-y: auto;
-      padding: 0 0 32px;
-      animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      background: var(--bg2);
+      border-radius: var(--r-xl) var(--r-xl) 0 0;
+      width: 100%; max-width: 480px;
+      max-height: 93vh; overflow-y: auto;
+      padding: 0 0 36px;
+      animation: sheetUp 0.35s cubic-bezier(0.34,1.4,0.64,1);
+      border-top: 1px solid var(--border2);
     }
-
-    @keyframes slideUp {
-      from { transform: translateY(100%); opacity: 0; }
-      to   { transform: translateY(0);    opacity: 1; }
+    @keyframes sheetUp {
+      from { transform: translateY(100%); }
+      to   { transform: translateY(0); }
     }
-
     .modal-handle {
-      width: 36px;
-      height: 4px;
-      background: var(--border);
-      border-radius: 99px;
-      margin: 12px auto 0;
+      width: 40px; height: 4px;
+      background: var(--border2); border-radius: 99px;
+      margin: 14px auto 0;
     }
-
     .modal-header {
-      padding: 16px 20px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 16px 20px 14px;
+      display: flex; align-items: center; justify-content: space-between;
       border-bottom: 1px solid var(--border);
     }
-
-    .modal-title { font-size: 18px; font-weight: 700; }
-
+    .modal-title { font-size: 18px; font-weight: 800; }
     .modal-close {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 18px;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--bg4); border: 1px solid var(--border2);
+      color: var(--txt2); display: flex;
+      align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px; font-family: var(--font);
       transition: all 0.2s;
     }
-
-    .modal-close:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
-
+    .modal-close:active { transform: scale(0.9); background: var(--red-bg); color: var(--red); }
     .modal-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 
-    /* =============================================
+    /* ============================
        FORM FIELDS
-    ============================================= */
-    .field { display: flex; flex-direction: column; gap: 6px; }
-
+    ============================ */
+    .field { display: flex; flex-direction: column; gap: 7px; }
     .field label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
+      font-size: 11px; font-weight: 700;
+      color: var(--txt2); text-transform: uppercase; letter-spacing: 0.5px;
     }
-
-    .field input,
-    .field select,
-    .field textarea {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      color: var(--text-primary);
-      font-family: var(--font);
-      font-size: 15px;
-      padding: 11px 14px;
-      transition: border-color 0.2s;
-      outline: none;
-      width: 100%;
+    .field input, .field select, .field textarea {
+      background: var(--bg4);
+      border: 1px solid var(--border2);
+      border-radius: var(--r-sm);
+      color: var(--txt1);
+      font-family: var(--font); font-size: 15px;
+      padding: 12px 14px;
+      transition: all 0.2s;
+      outline: none; width: 100%;
       -webkit-appearance: none;
     }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--border-focus);
-      box-shadow: 0 0 0 3px var(--accent-glow);
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-glow);
+      background: var(--bg3);
     }
-
-    .field select option { background: var(--bg-secondary); }
-
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .field-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-
-    .field-hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: -2px;
-    }
-
+    .field select option { background: var(--bg2); }
+    .field-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-hint  { font-size: 11px; color: var(--txt3); }
     .field-calc-result {
-      background: var(--accent-glow);
-      border: 1px solid var(--border-focus);
-      border-radius: var(--radius-sm);
-      padding: 10px 14px;
-      font-size: 13px;
-      color: var(--accent);
-      font-weight: 600;
-      display: none;
+      background: var(--blue-glow2);
+      border: 1px solid rgba(79,124,255,0.3);
+      border-radius: var(--r-sm);
+      padding: 10px 14px; font-size: 13px;
+      color: var(--blue); font-weight: 700; display: none;
     }
-
     .field-calc-result.visible { display: block; }
 
-    /* =============================================
-       BOTONES PRINCIPALES
-    ============================================= */
-    .btn {
-      padding: 14px 20px;
-      border-radius: var(--radius-md);
-      border: none;
+    /* ============================
+       CATEGORY CHIPS
+    ============================ */
+    .cat-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cat-chip {
+      padding: 8px 14px; border-radius: 99px;
+      border: 1px solid var(--border2);
+      background: var(--bg4);
+      color: var(--txt2); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px;
       font-family: var(--font);
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
     }
+    .cat-chip:active { transform: scale(0.95); }
+    .cat-chip.selected {
+      background: var(--blue-glow);
+      border-color: var(--blue); color: var(--blue);
+      box-shadow: 0 0 16px var(--blue-glow);
+    }
+    .cat-fields { display: flex; flex-direction: column; gap: 16px; }
+    .hidden { display: none !important; }
 
+    /* ============================
+       BUTTONS
+    ============================ */
+    .btn {
+      padding: 14px 20px; border-radius: var(--r-md);
+      border: none; font-family: var(--font);
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      display: inline-flex; align-items: center;
+      justify-content: center; gap: 8px;
+    }
+    .btn:active { transform: scale(0.97); }
     .btn-primary {
-      background: linear-gradient(135deg, #4f6ef7, #6d56f0);
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
       color: #fff;
-      box-shadow: 0 4px 16px rgba(79, 110, 247, 0.4);
+      box-shadow: 0 4px 20px rgba(79,124,255,0.4), 0 1px 0 rgba(255,255,255,0.1) inset;
     }
-
-    .btn-primary:active { transform: scale(0.97); }
-
+    .btn-primary:active { box-shadow: 0 2px 10px rgba(79,124,255,0.3); }
     .btn-secondary {
-      background: var(--bg-input);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
+      background: var(--bg4); border: 1px solid var(--border2);
+      color: var(--txt2);
     }
-
     .btn-full { width: 100%; }
 
-    .btn-danger {
-      background: var(--red-bg);
-      border: 1px solid var(--red);
-      color: var(--red);
-    }
-
-    /* =============================================
-       FAB (Floating Action Button)
-    ============================================= */
+    /* ============================
+       FAB
+    ============================ */
     .fab {
       position: fixed;
-      bottom: 84px;
-      right: 50%;
-      transform: translateX(50%);
+      bottom: calc(var(--nav-h) + 12px);
+      left: 50%; transform: translateX(-50%);
       max-width: calc(480px - 32px);
       width: calc(100% - 32px);
-      background: linear-gradient(135deg, #4f6ef7, #6d56f0);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 16px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: 0 8px 24px rgba(79, 110, 247, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: #fff; border: none;
+      border-radius: var(--r-md);
+      padding: 16px; font-size: 15px; font-weight: 800;
+      cursor: pointer; font-family: var(--font);
+      box-shadow: 0 8px 28px rgba(79,124,255,0.5),
+                  0 1px 0 rgba(255,255,255,0.15) inset;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
       transition: all 0.2s;
       z-index: 200;
+      letter-spacing: 0.2px;
+    }
+    .fab:active { transform: translateX(-50%) scale(0.97); box-shadow: 0 4px 16px rgba(79,124,255,0.4); }
+    .fab-icon {
+      width: 26px; height: 26px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900;
     }
 
-    .fab:active { transform: translateX(50%) scale(0.97); }
-
-    /* =============================================
+    /* ============================
        BOTTOM NAV
-    ============================================= */
+    ============================ */
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
+      position: fixed; bottom: 0; left: 50%;
       transform: translateX(-50%);
-      width: 100%;
-      max-width: 480px;
+      width: 100%; max-width: 480px;
       height: var(--nav-h);
-      background: var(--bg-secondary);
+      background: rgba(17,21,38,0.95);
+      backdrop-filter: blur(20px);
       border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      z-index: 300;
+      display: flex; align-items: center; z-index: 300;
     }
-
     .nav-btn {
-      flex: 1;
-      height: 100%;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      transition: color 0.2s;
-      position: relative;
+      flex: 1; height: 100%;
+      background: none; border: none;
+      color: var(--txt3); font-size: 10px; font-weight: 700;
+      cursor: pointer; font-family: var(--font);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px;
+      transition: all 0.25s; position: relative;
+      letter-spacing: 0.2px;
+    }
+    .nav-icon { font-size: 22px; transition: transform 0.25s; }
+    .nav-btn.active { color: var(--blue); }
+    .nav-btn.active .nav-icon { transform: scale(1.2); }
+    .nav-btn.active::before {
+      content: '';
+      position: absolute; top: 0; left: 20%; right: 20%;
+      height: 2px; background: var(--blue);
+      border-radius: 0 0 4px 4px;
+      box-shadow: 0 0 8px var(--blue);
     }
 
-    .nav-btn .nav-icon { font-size: 22px; }
-
-    .nav-btn.active { color: var(--accent); }
-
-    /* =============================================
-       HISTORIAL DE PAGADOS
-    ============================================= */
+    /* ============================
+       PAGADOS
+    ============================ */
     .paid-card {
-      background: var(--bg-card);
+      background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: var(--radius-md);
+      border-radius: var(--r-md);
       padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      opacity: 0.75;
+      display: flex; align-items: center; gap: 12px;
+      opacity: 0.8;
+      transition: opacity 0.2s;
     }
-
+    .paid-card:active { opacity: 1; }
     .paid-card-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: var(--radius-sm);
-      background: var(--green-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,224,150,0.15), rgba(0,224,150,0.05));
+      border: 1px solid rgba(0,224,150,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
     }
-
     .paid-card-info { flex: 1; min-width: 0; }
-
     .paid-card-name {
-      font-size: 14px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 14px; font-weight: 700;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
+    .paid-card-meta { font-size: 11px; color: var(--txt3); margin-top: 2px; }
+    .paid-card-amount { font-size: 15px; font-weight: 800; color: var(--green); }
+    .btn-restore {
+      font-size: 11px; color: var(--txt3);
+      background: none; border: none;
+      cursor: pointer; margin-top: 4px;
+      display: block; text-align: right;
+      font-family: var(--font);
+      transition: color 0.2s;
+    }
+    .btn-restore:active { color: var(--blue); }
 
-    .paid-card-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-
-    .paid-card-amount { font-size: 15px; font-weight: 700; color: var(--green); }
-
-    /* =============================================
+    /* ============================
        CONFIGURACIÓN
-    ============================================= */
+    ============================ */
     .config-section {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      margin-bottom: 16px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--r-md); overflow: hidden; margin-bottom: 14px;
     }
-
     .config-section-title {
-      padding: 12px 16px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      padding: 12px 16px; font-size: 10px; font-weight: 800;
+      color: var(--txt3); text-transform: uppercase; letter-spacing: 0.7px;
       border-bottom: 1px solid var(--border);
-      background: var(--bg-secondary);
+      background: var(--bg2);
     }
-
     .config-item {
-      display: flex;
-      align-items: center;
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      gap: 12px;
-    }
-
-    .config-item:last-child { border-bottom: none; }
-
-    .config-item-icon { font-size: 22px; width: 28px; text-align: center; }
-
-    .config-item-info { flex: 1; }
-
-    .config-item-label { font-size: 14px; font-weight: 600; }
-
-    .config-item-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-
-    /* Toggle switch */
-    .toggle {
-      position: relative;
-      width: 48px;
-      height: 26px;
-      flex-shrink: 0;
-    }
-
-    .toggle input { opacity: 0; width: 0; height: 0; }
-
-    .toggle-slider {
-      position: absolute;
-      inset: 0;
-      background: var(--border);
-      border-radius: 99px;
-      cursor: pointer;
+      display: flex; align-items: center;
+      padding: 14px 16px; border-bottom: 1px solid var(--border); gap: 12px;
       transition: background 0.2s;
     }
+    .config-item:last-child { border-bottom: none; }
+    .config-item:active { background: var(--bg4); }
+    .config-item-icon { font-size: 22px; width: 28px; text-align: center; }
+    .config-item-info { flex: 1; }
+    .config-item-label { font-size: 14px; font-weight: 600; }
+    .config-item-sub { font-size: 11px; color: var(--txt3); margin-top: 2px; }
 
-    .toggle-slider::before {
-      content: '';
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      left: 3px;
-      top: 3px;
-      background: #fff;
-      border-radius: 50%;
-      transition: transform 0.2s;
+    .toggle { position: relative; width: 50px; height: 28px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--border2); border-radius: 99px;
+      cursor: pointer; transition: background 0.3s;
     }
-
-    .toggle input:checked + .toggle-slider { background: var(--accent); }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 22px; height: 22px;
+      left: 3px; top: 3px;
+      background: #fff; border-radius: 50%;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .toggle input:checked + .toggle-slider { background: var(--blue); box-shadow: 0 0 12px var(--blue-glow); }
     .toggle input:checked + .toggle-slider::before { transform: translateX(22px); }
 
-    /* =============================================
-       TOAST / SNACKBAR
-    ============================================= */
+    /* ============================
+       TOAST
+    ============================ */
     .toast {
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      padding: 12px 20px;
-      border-radius: var(--radius-md);
-      font-size: 14px;
-      font-weight: 600;
-      max-width: 320px;
-      width: calc(100% - 40px);
-      text-align: center;
-      z-index: 999;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      justify-content: center;
-      box-shadow: var(--shadow-float);
+      position: fixed; bottom: 84px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--bg3); border: 1px solid var(--border2);
+      color: var(--txt1); padding: 12px 20px;
+      border-radius: var(--r-md); font-size: 14px; font-weight: 600;
+      max-width: 320px; width: calc(100% - 40px);
+      text-align: center; z-index: 999;
+      opacity: 0; pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34,1.4,0.64,1);
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      font-family: var(--font);
     }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(0,224,150,0.4); }
+    .toast.error   { border-color: rgba(255,77,109,0.4); }
 
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .toast.success { border-color: var(--green); }
-    .toast.error   { border-color: var(--red); }
-
-    /* =============================================
-       CATEGORÍAS DE CAMPOS DINÁMICOS
-    ============================================= */
-    .cat-fields { display: flex; flex-direction: column; gap: 16px; }
-    .cat-fields .hidden { display: none; }
-
-    /* =============================================
-       CHIP DE CATEGORÍA
-    ============================================= */
-    .cat-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .cat-chip {
-      padding: 7px 14px;
-      border-radius: 99px;
-      border: 1px solid var(--border);
-      background: var(--bg-input);
-      color: var(--text-secondary);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .cat-chip.selected {
-      background: var(--accent-glow);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* =============================================
-       LOADER / ANIMACIÓN PULSO
-    ============================================= */
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50%       { opacity: 0.4; }
-    }
-
-    .pulse { animation: pulse 1.5s infinite; }
-
-    /* =============================================
+    /* ============================
        INSTALL BANNER
-    ============================================= */
+    ============================ */
     .install-banner {
       margin: 0 0 16px;
-      background: linear-gradient(135deg, rgba(79,110,247,0.15), rgba(109,86,240,0.15));
-      border: 1px solid var(--border-focus);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      background: linear-gradient(135deg, rgba(79,124,255,0.12), rgba(109,93,245,0.12));
+      border: 1px solid rgba(79,124,255,0.25);
+      border-radius: var(--r-md); padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
     }
-
-    .install-banner-text { flex: 1; font-size: 13px; color: var(--text-secondary); }
-    .install-banner-text strong { display: block; color: var(--text-primary); font-size: 14px; margin-bottom: 2px; }
-
+    .install-banner-text { flex: 1; font-size: 13px; color: var(--txt2); }
+    .install-banner-text strong { display: block; color: var(--txt1); font-size: 14px; margin-bottom: 2px; }
     .btn-install {
-      background: linear-gradient(135deg, #4f6ef7, #6d56f0);
-      color: #fff;
-      border: none;
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: #fff; border: none;
+      padding: 9px 16px; border-radius: var(--r-sm);
+      font-size: 12px; font-weight: 800;
+      cursor: pointer; white-space: nowrap; font-family: var(--font);
     }
 
-    /* =============================================
-       RESPONSIVE ADJUSTMENTS
-    ============================================= */
     @media (max-width: 360px) {
-      .header-title { font-size: 18px; }
-      .modal-body { padding: 16px; }
-      .field-row-3 { grid-template-columns: 1fr 1fr; }
+      .header-title { font-size: 17px; }
+      .field-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
 <body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-ring">
+    <img class="splash-logo" src="icon.svg" alt="Mis Pagos" />
+  </div>
+  <div class="splash-title">MIS PAGOS</div>
+  <div class="splash-sub">Control inteligente de vencimientos</div>
+  <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+</div>
 
 <div id="app">
 
   <!-- HEADER -->
   <header class="header">
     <div class="header-brand">
-      <div class="header-logo">
-        <img src="icon.svg" alt="Mis Pagos" />
-      </div>
+      <div class="header-logo"><img src="icon.svg" alt="Mis Pagos" /></div>
       <div>
         <div class="header-title">Mis Pagos</div>
         <div class="header-subtitle" id="headerDate">Cargando...</div>
       </div>
     </div>
     <div class="header-bell" id="bellBtn" onclick="requestNotifPermission()">
-      🔔
-      <span class="notif-badge" id="notifBadge"></span>
+      🔔<span class="notif-badge" id="notifBadge"></span>
     </div>
   </header>
 
   <!-- TABS -->
   <nav class="tabs">
-    <button class="tab-btn active" id="tab-pending"   onclick="switchTab('pending')">
-      <span class="tab-icon">📋</span> Pendientes
+    <button class="tab-btn active" id="tab-pending" onclick="switchTab('pending')">
+      <span class="tab-icon">📋</span>Pendientes
       <span class="tab-badge" id="badge-pending"></span>
     </button>
-    <button class="tab-btn" id="tab-paid"     onclick="switchTab('paid')">
-      <span class="tab-icon">✅</span> Pagados
+    <button class="tab-btn" id="tab-paid" onclick="switchTab('paid')">
+      <span class="tab-icon">✅</span>Pagados
     </button>
-    <button class="tab-btn" id="tab-config"   onclick="switchTab('config')">
-      <span class="tab-icon">⚙️</span> Config
+    <button class="tab-btn" id="tab-config" onclick="switchTab('config')">
+      <span class="tab-icon">⚙️</span>Config
     </button>
   </nav>
 
   <!-- VISTAS -->
   <div class="views">
 
-    <!-- ===== VISTA: PENDIENTES ===== -->
+    <!-- PENDIENTES -->
     <div class="view active" id="view-pending">
-
-      <!-- Banner instalar PWA -->
       <div class="install-banner" id="installBanner" style="display:none">
         <span style="font-size:28px">📲</span>
         <div class="install-banner-text">
-          <strong>Instalar en tu celular</strong>
-          Acceso rápido y notificaciones
+          <strong>Instalar en tu celular</strong>Acceso rápido y notificaciones
         </div>
         <button class="btn-install" id="installBtn">Instalar</button>
       </div>
 
-      <!-- Resumen -->
       <div class="summary-cards">
         <div class="summary-card sc-urgent">
           <div class="sc-label">⚠️ Urgentes</div>
@@ -992,28 +861,25 @@
         </div>
       </div>
 
-      <!-- Lista de pagos urgentes -->
       <div id="section-overdue" style="display:none">
-        <div class="section-title">🔴 Vencidos / En tolerancia</div>
+        <div class="section-title">🔴 Vencidos</div>
         <div class="payments-list" id="list-overdue"></div>
+        <div style="height:14px"></div>
       </div>
-
       <div id="section-critical" style="display:none">
-        <div class="section-title">🟠 Crítico (hoy / mañana)</div>
+        <div class="section-title">🟠 Urgente (hoy/mañana)</div>
         <div class="payments-list" id="list-critical"></div>
+        <div style="height:14px"></div>
       </div>
-
       <div id="section-warn" style="display:none">
         <div class="section-title">🟡 Próximos 7 días</div>
         <div class="payments-list" id="list-warn"></div>
+        <div style="height:14px"></div>
       </div>
-
       <div id="section-safe">
         <div class="section-title">🟢 Al día</div>
         <div class="payments-list" id="list-safe"></div>
       </div>
-
-      <!-- Estado vacío -->
       <div class="empty-state" id="emptyState" style="display:none">
         <div class="empty-icon">🗂️</div>
         <h3>Sin pagos registrados</h3>
@@ -1021,20 +887,19 @@
       </div>
     </div>
 
-    <!-- ===== VISTA: PAGADOS ===== -->
+    <!-- PAGADOS -->
     <div class="view" id="view-paid">
       <div class="section-title">Historial de pagos</div>
       <div class="payments-list" id="list-paid"></div>
       <div class="empty-state" id="emptyPaid" style="display:none">
         <div class="empty-icon">🎉</div>
-        <h3>Nada por aquí aún</h3>
+        <h3>Nada aquí todavía</h3>
         <p>Los pagos que marques como realizados aparecerán aquí.</p>
       </div>
     </div>
 
-    <!-- ===== VISTA: CONFIGURACIÓN ===== -->
+    <!-- CONFIG -->
     <div class="view" id="view-config">
-
       <div class="config-section">
         <div class="config-section-title">🔔 Notificaciones</div>
         <div class="config-item">
@@ -1051,11 +916,11 @@
         <div class="config-item">
           <span class="config-item-icon">⏰</span>
           <div class="config-item-info">
-            <div class="config-item-label">Hora del recordatorio diario</div>
-            <div class="config-item-sub">Revisar vencimientos cada día</div>
+            <div class="config-item-label">Hora del recordatorio</div>
+            <div class="config-item-sub">Revisión diaria de vencimientos</div>
           </div>
           <input type="time" id="reminderTime" value="08:00"
-            style="background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:14px;width:90px;"
+            style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;color:var(--txt1);padding:7px 10px;font-size:14px;width:92px;font-family:var(--font);"
             onchange="saveReminderTime(this.value)" />
         </div>
       </div>
@@ -1065,11 +930,11 @@
         <div class="config-item">
           <span class="config-item-icon">🟡</span>
           <div class="config-item-info">
-            <div class="config-item-label">Días para alerta amarilla</div>
-            <div class="config-item-sub">Cuántos días antes se pone en alerta</div>
+            <div class="config-item-label">Días alerta amarilla</div>
+            <div class="config-item-sub">Días antes de ponerse en alerta</div>
           </div>
           <input type="number" id="warnDays" value="7" min="1" max="30"
-            style="background:var(--bg-input);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);padding:6px 10px;font-size:14px;width:64px;text-align:center;"
+            style="background:var(--bg4);border:1px solid var(--border2);border-radius:8px;color:var(--txt1);padding:7px 10px;font-size:14px;width:64px;text-align:center;font-family:var(--font);"
             onchange="saveWarnDays(this.value)" />
         </div>
       </div>
@@ -1082,7 +947,7 @@
             <div class="config-item-label">Exportar datos</div>
             <div class="config-item-sub">Descargar respaldo en JSON</div>
           </div>
-          <span style="color:var(--text-muted)">›</span>
+          <span style="color:var(--txt3);font-size:18px">›</span>
         </div>
         <div class="config-item" style="cursor:pointer" onclick="document.getElementById('importFile').click()">
           <span class="config-item-icon">📥</span>
@@ -1090,7 +955,7 @@
             <div class="config-item-label">Importar datos</div>
             <div class="config-item-sub">Restaurar desde un respaldo</div>
           </div>
-          <span style="color:var(--text-muted)">›</span>
+          <span style="color:var(--txt3);font-size:18px">›</span>
         </div>
         <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" />
       </div>
@@ -1103,40 +968,36 @@
             <div class="config-item-label" style="color:var(--red)">Borrar todos los datos</div>
             <div class="config-item-sub">Esta acción no se puede deshacer</div>
           </div>
-          <span style="color:var(--text-muted)">›</span>
+          <span style="color:var(--txt3);font-size:18px">›</span>
         </div>
       </div>
 
-      <div style="text-align:center;padding:20px 0;color:var(--text-muted);font-size:12px">
-        Mis Pagos v1.0 · Todo guardado en este dispositivo
+      <div style="text-align:center;padding:20px 0;color:var(--txt3);font-size:12px">
+        Mis Pagos v1.1 · Todo guardado en este dispositivo
       </div>
     </div>
-
-  </div><!-- /views -->
+  </div>
 
   <!-- FAB -->
   <button class="fab" id="fabBtn" onclick="openModal()">
-    <span style="font-size:22px">＋</span> Agregar pago
+    <span class="fab-icon">＋</span> Agregar pago
   </button>
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <button class="nav-btn active" id="nav-pending" onclick="switchTab('pending')">
-      <span class="nav-icon">📋</span> Pendientes
+      <span class="nav-icon">📋</span>Pendientes
     </button>
     <button class="nav-btn" id="nav-paid" onclick="switchTab('paid')">
-      <span class="nav-icon">✅</span> Pagados
+      <span class="nav-icon">✅</span>Pagados
     </button>
     <button class="nav-btn" id="nav-config" onclick="switchTab('config')">
-      <span class="nav-icon">⚙️</span> Config
+      <span class="nav-icon">⚙️</span>Config
     </button>
   </nav>
+</div>
 
-</div><!-- /app -->
-
-<!-- =============================================
-     MODAL: AGREGAR / EDITAR PAGO
-============================================= -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
   <div class="modal" id="modal">
     <div class="modal-handle"></div>
@@ -1145,49 +1006,40 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-
-      <!-- Nombre del pago -->
       <div class="field">
         <label>Nombre del pago</label>
         <input type="text" id="fName" placeholder="Ej: BCP Visa, Luz del Sur, Netflix..." maxlength="60" />
       </div>
-
-      <!-- Categoría -->
       <div class="field">
         <label>Categoría</label>
         <div class="cat-chips" id="catChips">
-          <div class="cat-chip selected" data-cat="banco" onclick="selectCat('banco')">🏦 Banco/TC</div>
-          <div class="cat-chip" data-cat="servicio" onclick="selectCat('servicio')">💡 Servicios</div>
-          <div class="cat-chip" data-cat="educacion" onclick="selectCat('educacion')">🎓 Educación</div>
-          <div class="cat-chip" data-cat="otro" onclick="selectCat('otro')">📦 Otros</div>
+          <div class="cat-chip selected" data-cat="banco"     onclick="selectCat('banco')">🏦 Banco/TC</div>
+          <div class="cat-chip"          data-cat="servicio"  onclick="selectCat('servicio')">💡 Servicios</div>
+          <div class="cat-chip"          data-cat="educacion" onclick="selectCat('educacion')">🎓 Educación</div>
+          <div class="cat-chip"          data-cat="otro"      onclick="selectCat('otro')">📦 Otros</div>
         </div>
       </div>
-
-      <!-- Monto -->
       <div class="field">
         <label>Monto (S/)</label>
         <input type="number" id="fAmount" placeholder="0.00" step="0.01" min="0" />
       </div>
 
-      <!-- CAMPOS DINÁMICOS: BANCO / TARJETA DE CRÉDITO -->
+      <!-- BANCO -->
       <div id="fields-banco" class="cat-fields">
         <div class="field-row">
           <div class="field">
-            <label>Fecha de corte</label>
-            <input type="number" id="fCutDay" placeholder="Día (1-31)" min="1" max="31"
-              oninput="calcCreditDate()" />
+            <label>Día de corte</label>
+            <input type="number" id="fCutDay" placeholder="Día (1-31)" min="1" max="31" oninput="calcCreditDate()" />
             <span class="field-hint">Día del mes de corte</span>
           </div>
           <div class="field">
             <label>Plazo base (días)</label>
-            <input type="number" id="fTerm" placeholder="Ej: 25" min="1" max="60" value="25"
-              oninput="calcCreditDate()" />
+            <input type="number" id="fTerm" placeholder="Ej: 25" min="1" max="60" value="25" oninput="calcCreditDate()" />
           </div>
         </div>
         <div class="field">
           <label>Días de tolerancia / gracia</label>
-          <input type="number" id="fGrace" placeholder="Ej: 5" min="0" max="30" value="0"
-            oninput="calcCreditDate()" />
+          <input type="number" id="fGrace" placeholder="Ej: 5" min="0" max="30" value="0" oninput="calcCreditDate()" />
           <span class="field-hint">Días adicionales después del plazo base</span>
         </div>
         <div class="field-calc-result" id="calcResult">
@@ -1195,17 +1047,17 @@
         </div>
       </div>
 
-      <!-- CAMPOS DINÁMICOS: SERVICIOS -->
+      <!-- SERVICIOS -->
       <div id="fields-servicio" class="cat-fields hidden">
         <div class="field">
           <label>Tipo de servicio</label>
           <select id="fServiceType">
             <option value="luz">💡 Electricidad / Luz</option>
             <option value="agua">💧 Agua</option>
-            <option value="gas">🔥 Gas (balón / red)</option>
+            <option value="gas">🔥 Gas</option>
             <option value="telefono">📱 Teléfono</option>
             <option value="internet">🌐 Internet</option>
-            <option value="otro">📦 Otro servicio</option>
+            <option value="otro">📦 Otro</option>
           </select>
         </div>
         <div class="field-row">
@@ -1224,11 +1076,11 @@
         </div>
       </div>
 
-      <!-- CAMPOS DINÁMICOS: EDUCACIÓN -->
+      <!-- EDUCACIÓN -->
       <div id="fields-educacion" class="cat-fields hidden">
         <div class="field">
           <label>Institución</label>
-          <input type="text" id="fInstitution" placeholder="Ej: Colegio San José, UPC..." />
+          <input type="text" id="fInstitution" placeholder="Ej: Colegio, UPC, Senati..." />
         </div>
         <div class="field-row">
           <div class="field">
@@ -1243,13 +1095,13 @@
         </div>
       </div>
 
-      <!-- CAMPOS DINÁMICOS: OTRO / SUSCRIPCIÓN -->
+      <!-- OTROS -->
       <div id="fields-otro" class="cat-fields hidden">
         <div class="field">
           <label>Tipo</label>
           <select id="fOtroType">
-            <option value="streaming">🎬 Streaming (Netflix, Disney+...)</option>
-            <option value="alquiler">🏠 Alquiler / Arriendo</option>
+            <option value="streaming">🎬 Streaming</option>
+            <option value="alquiler">🏠 Alquiler</option>
             <option value="seguro">🛡️ Seguro</option>
             <option value="prestamo">💵 Préstamo / Cuota</option>
             <option value="suscripcion">📱 Suscripción</option>
@@ -1272,85 +1124,56 @@
         </div>
       </div>
 
-      <!-- Notas -->
       <div class="field">
         <label>Notas (opcional)</label>
-        <textarea id="fNotes" rows="2" placeholder="Número de cuenta, referencia, observaciones..."
-          style="resize:none"></textarea>
+        <textarea id="fNotes" rows="2" placeholder="Número de cuenta, referencia..." style="resize:none"></textarea>
       </div>
 
-      <!-- Botones -->
       <div style="display:flex;gap:10px;margin-top:4px">
         <button class="btn btn-secondary" style="flex:1" onclick="closeModal()">Cancelar</button>
-        <button class="btn btn-primary" style="flex:2" onclick="savePayment()">
+        <button class="btn btn-primary"   style="flex:2" onclick="savePayment()">
           <span id="saveBtnText">💾 Guardar</span>
         </button>
       </div>
-
-    </div><!-- /modal-body -->
-  </div><!-- /modal -->
-</div><!-- /modal-overlay -->
+    </div>
+  </div>
+</div>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- =============================================
-     JAVASCRIPT
-============================================= -->
 <script>
 /* ==============================================
-   CONSTANTES Y ESTADO GLOBAL
+   ESTADO GLOBAL
 =============================================== */
-const STORAGE_KEY   = 'misPagos_v1';
-const PAID_KEY      = 'misPagos_paid_v1';
-const CONFIG_KEY    = 'misPagos_config_v1';
+const STORAGE_KEY = 'misPagos_v1';
+const PAID_KEY    = 'misPagos_paid_v1';
+const CONFIG_KEY  = 'misPagos_config_v1';
 
-let payments  = [];      // pagos pendientes
-let paidList  = [];      // historial de pagados
-let config    = {
-  warnDays:     7,
-  reminderTime: '08:00',
-  notifEnabled: false
-};
-let editingId        = null;
-let selectedCategory = 'banco';
-let deferredPrompt   = null;  // para instalar PWA
+let payments = [], paidList = [], editingId = null, selectedCategory = 'banco', deferredPrompt = null;
+let config = { warnDays: 7, reminderTime: '08:00', notifEnabled: false };
 
-/* ==============================================
-   CATEGORÍAS: ICONOS Y NOMBRES
-=============================================== */
-const CAT_META = {
-  banco:    { icon: '🏦', label: 'Banco / Tarjeta' },
-  servicio: { icon: '💡', label: 'Servicio'        },
-  educacion:{ icon: '🎓', label: 'Educación'       },
-  otro:     { icon: '📦', label: 'Suscripción / Otros' }
-};
-
-const SERVICE_ICONS = {
-  luz: '💡', agua: '💧', gas: '🔥',
-  telefono: '📱', internet: '🌐', otro: '📦'
-};
-
-const OTRO_ICONS = {
-  streaming: '🎬', alquiler: '🏠', seguro: '🛡️',
-  prestamo: '💵', suscripcion: '📱', otro: '📦'
-};
+const CAT_META = { banco:'🏦', servicio:'💡', educacion:'🎓', otro:'📦' };
+const SERVICE_ICONS = { luz:'💡', agua:'💧', gas:'🔥', telefono:'📱', internet:'🌐', otro:'📦' };
+const OTRO_ICONS    = { streaming:'🎬', alquiler:'🏠', seguro:'🛡️', prestamo:'💵', suscripcion:'📱', otro:'📦' };
 
 /* ==============================================
    INIT
 =============================================== */
 document.addEventListener('DOMContentLoaded', () => {
-  loadData();
-  renderAll();
-  updateHeaderDate();
-  setInterval(updateHeaderDate, 60000);
-  registerServiceWorker();
-  setupPWAInstall();
-  scheduleLocalReminder();
-  applyConfig();
+  // Splash
+  const splash = document.getElementById('splash');
+  setTimeout(() => {
+    splash.classList.add('hide');
+    setTimeout(() => splash.style.display = 'none', 750);
+  }, 2400);
 
-  // Activar badge de notif si hay urgentes
-  setTimeout(checkAndNotify, 2000);
+  loadData(); renderAll(); updateHeaderDate();
+  setInterval(updateHeaderDate, 60000);
+  registerServiceWorker(); setupPWAInstall();
+  scheduleLocalReminder(); applyConfig();
+  setTimeout(checkAndNotify, 2500);
+  setTimeout(autoRenewDates, 1200);
 });
 
 /* ==============================================
@@ -1358,801 +1181,423 @@ document.addEventListener('DOMContentLoaded', () => {
 =============================================== */
 function loadData() {
   try {
-    const p = localStorage.getItem(STORAGE_KEY);
-    if (p) payments = JSON.parse(p);
-
-    const pa = localStorage.getItem(PAID_KEY);
-    if (pa) paidList = JSON.parse(pa);
-
-    const c = localStorage.getItem(CONFIG_KEY);
-    if (c) config = { ...config, ...JSON.parse(c) };
-  } catch(e) { console.warn('Error cargando datos:', e); }
+    const p = localStorage.getItem(STORAGE_KEY); if (p) payments = JSON.parse(p);
+    const pa = localStorage.getItem(PAID_KEY);   if (pa) paidList = JSON.parse(pa);
+    const c  = localStorage.getItem(CONFIG_KEY); if (c)  config  = { ...config, ...JSON.parse(c) };
+  } catch(e) { console.warn('Error cargando:', e); }
 }
-
 function saveData() {
   try {
-    localStorage.setItem(STORAGE_KEY,  JSON.stringify(payments));
-    localStorage.setItem(PAID_KEY,     JSON.stringify(paidList));
-    localStorage.setItem(CONFIG_KEY,   JSON.stringify(config));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payments));
+    localStorage.setItem(PAID_KEY,    JSON.stringify(paidList));
+    localStorage.setItem(CONFIG_KEY,  JSON.stringify(config));
   } catch(e) { showToast('⚠️ Error al guardar', 'error'); }
 }
 
 /* ==============================================
-   CONFIGURACIÓN UI
+   CONFIG UI
 =============================================== */
 function applyConfig() {
-  const toggle = document.getElementById('toggleNotif');
-  const warnInput = document.getElementById('warnDays');
-  const timeInput = document.getElementById('reminderTime');
-
-  toggle.checked   = config.notifEnabled;
-  warnInput.value  = config.warnDays;
-  timeInput.value  = config.reminderTime;
-
-  if (config.notifEnabled) {
-    document.getElementById('notifBadge').classList.add('visible');
-  }
+  document.getElementById('toggleNotif').checked = config.notifEnabled;
+  document.getElementById('warnDays').value       = config.warnDays;
+  document.getElementById('reminderTime').value   = config.reminderTime;
+  if (config.notifEnabled) document.getElementById('notifBadge').classList.add('visible');
 }
-
-function saveWarnDays(val) {
-  config.warnDays = parseInt(val) || 7;
-  saveData();
-  renderPending();
-  showToast('✅ Configuración guardada');
-}
-
-function saveReminderTime(val) {
-  config.reminderTime = val;
-  saveData();
-  scheduleLocalReminder();
-  showToast('⏰ Hora de recordatorio guardada');
-}
-
+function saveWarnDays(v)    { config.warnDays = parseInt(v)||7; saveData(); renderPending(); showToast('✅ Guardado'); }
+function saveReminderTime(v){ config.reminderTime = v; saveData(); scheduleLocalReminder(); showToast('⏰ Hora guardada'); }
 function toggleNotifications(enabled) {
   if (enabled) {
     requestNotifPermission().then(granted => {
       config.notifEnabled = granted;
       document.getElementById('toggleNotif').checked = granted;
       saveData();
-      if (granted) {
-        scheduleLocalReminder();
-        showToast('🔔 Notificaciones activadas');
-      }
+      if (granted) { scheduleLocalReminder(); showToast('🔔 Notificaciones activadas'); }
     });
-  } else {
-    config.notifEnabled = false;
-    saveData();
-    showToast('🔕 Notificaciones desactivadas');
-  }
+  } else { config.notifEnabled = false; saveData(); showToast('🔕 Notificaciones desactivadas'); }
 }
 
 /* ==============================================
-   FECHA Y HORAS
+   FECHAS
 =============================================== */
-function today() {
-  const d = new Date();
-  d.setHours(0,0,0,0);
-  return d;
-}
-
+function today()         { const d = new Date(); d.setHours(0,0,0,0); return d; }
 function daysUntil(dateStr) {
   if (!dateStr) return null;
-  const due = new Date(dateStr + 'T00:00:00');
-  const diff = due - today();
-  return Math.round(diff / 86400000);
+  return Math.round((new Date(dateStr+'T00:00:00') - today()) / 86400000);
 }
-
 function formatDate(dateStr) {
   if (!dateStr) return '--';
-  const d = new Date(dateStr + 'T00:00:00');
-  return d.toLocaleDateString('es-PE', { day: '2-digit', month: 'short', year: 'numeric' });
+  return new Date(dateStr+'T00:00:00').toLocaleDateString('es-PE', { day:'2-digit', month:'short', year:'numeric' });
 }
-
 function updateHeaderDate() {
-  const opts = { weekday:'long', day:'numeric', month:'long' };
   document.getElementById('headerDate').textContent =
-    new Date().toLocaleDateString('es-PE', opts);
+    new Date().toLocaleDateString('es-PE', { weekday:'long', day:'numeric', month:'long' });
 }
-
-function getStatus(daysLeft) {
-  if (daysLeft === null) return 'safe';
-  if (daysLeft < 0)  return 'overdue';
-  if (daysLeft <= 1) return 'critical';
-  if (daysLeft <= config.warnDays) return 'warn';
+function getStatus(days) {
+  if (days === null)       return 'safe';
+  if (days < 0)            return 'overdue';
+  if (days <= 1)           return 'critical';
+  if (days <= config.warnDays) return 'warn';
   return 'safe';
 }
-
-function getDaysText(daysLeft) {
-  if (daysLeft === null)  return 'Sin fecha';
-  if (daysLeft < 0)  return `Vencido hace ${Math.abs(daysLeft)} día${Math.abs(daysLeft)!==1?'s':''}`;
-  if (daysLeft === 0) return '¡Vence HOY!';
-  if (daysLeft === 1) return 'Vence mañana';
-  return `Vence en ${daysLeft} días`;
-}
-
-function getStatusLabel(status) {
-  return {
-    safe:     'Al día',
-    warn:     'Próximo',
-    critical: '¡Urgente!',
-    overdue:  'Vencido'
-  }[status] || '';
+function getDaysText(days) {
+  if (days === null)  return 'Sin fecha';
+  if (days < 0)   return `Vencido hace ${Math.abs(days)} día${Math.abs(days)!==1?'s':''}`;
+  if (days === 0)  return '¡Vence HOY!';
+  if (days === 1)  return 'Vence mañana';
+  return `Vence en ${days} días`;
 }
 
 /* ==============================================
-   CÁLCULO AUTOMÁTICO TARJETA DE CRÉDITO
+   CÁLCULO TC
 =============================================== */
 function calcCreditDate() {
   const cutDay = parseInt(document.getElementById('fCutDay').value);
-  const term   = parseInt(document.getElementById('fTerm').value) || 25;
+  const term   = parseInt(document.getElementById('fTerm').value)  || 25;
   const grace  = parseInt(document.getElementById('fGrace').value) || 0;
   const result = document.getElementById('calcResult');
-  const resultDate = document.getElementById('calcResultDate');
-
-  if (!cutDay || cutDay < 1 || cutDay > 31) {
-    result.classList.remove('visible');
-    return;
-  }
-
-  // Calcula la próxima fecha de corte
+  if (!cutDay||cutDay<1||cutDay>31) { result.classList.remove('visible'); return; }
   const now = new Date();
-  let cutDate = new Date(now.getFullYear(), now.getMonth(), cutDay);
-  if (cutDate <= now) {
-    cutDate = new Date(now.getFullYear(), now.getMonth() + 1, cutDay);
-  }
-
-  // Fecha límite = corte + plazo + tolerancia
-  const limitDate = new Date(cutDate);
-  limitDate.setDate(limitDate.getDate() + term + grace);
-
-  const yyyy = limitDate.getFullYear();
-  const mm   = String(limitDate.getMonth()+1).padStart(2,'0');
-  const dd   = String(limitDate.getDate()).padStart(2,'0');
-
-  // Guardar en campo oculto para usar al guardar
-  document.getElementById('fCutDay').dataset.limit = `${yyyy}-${mm}-${dd}`;
-
-  resultDate.textContent = formatDate(`${yyyy}-${mm}-${dd}`);
+  let cut = new Date(now.getFullYear(), now.getMonth(), cutDay);
+  if (cut <= now) cut = new Date(now.getFullYear(), now.getMonth()+1, cutDay);
+  const lim = new Date(cut); lim.setDate(lim.getDate()+term+grace);
+  const ds = lim.toISOString().split('T')[0];
+  document.getElementById('fCutDay').dataset.limit = ds;
+  document.getElementById('calcResultDate').textContent = formatDate(ds);
   result.classList.add('visible');
 }
 
 /* ==============================================
-   CALCULAR FECHA LÍMITE DE UN PAGO (AL VENCER)
+   RENDER
 =============================================== */
-function computeDueDate(payment) {
-  return payment.dueDate || null;
-}
-
-/* ==============================================
-   RENDER PRINCIPAL
-=============================================== */
-function renderAll() {
-  renderPending();
-  renderPaid();
-}
+function renderAll() { renderPending(); renderPaid(); }
 
 function renderPending() {
-  const groups = { overdue: [], critical: [], warn: [], safe: [] };
-
+  const groups = { overdue:[], critical:[], warn:[], safe:[] };
   payments.forEach(p => {
-    const days   = daysUntil(computeDueDate(p));
-    const status = getStatus(days);
-    groups[status].push({ ...p, days, status });
+    const days = daysUntil(p.dueDate);
+    groups[getStatus(days)].push({ ...p, days });
   });
+  Object.keys(groups).forEach(g => groups[g].sort((a,b) => (a.days??9999)-(b.days??9999)));
 
-  // Ordenar cada grupo por días
-  Object.keys(groups).forEach(g => {
-    groups[g].sort((a,b) => (a.days ?? 9999) - (b.days ?? 9999));
-  });
-
-  const allGroups = ['overdue','critical','warn','safe'];
   const total = payments.length;
+  document.getElementById('emptyState').style.display = total===0 ? 'flex' : 'none';
 
-  // Estado vacío
-  document.getElementById('emptyState').style.display = total === 0 ? 'flex' : 'none';
-  document.getElementById('fabBtn').style.display     = 'flex';
-
-  // Renderizar cada sección
-  allGroups.forEach(g => {
-    const section = document.getElementById(`section-${g}`);
-    const list    = document.getElementById(`list-${g}`);
-    if (!section || !list) return;
-
-    if (groups[g].length === 0) {
-      section.style.display = 'none';
-      return;
-    }
-
-    section.style.display = 'block';
-    list.innerHTML = groups[g].map(p => paymentCardHTML(p)).join('');
+  ['overdue','critical','warn','safe'].forEach((g,i) => {
+    const sec  = document.getElementById(`section-${g}`);
+    const list = document.getElementById(`list-${g}`);
+    if (!sec||!list) return;
+    if (groups[g].length===0) { sec.style.display='none'; return; }
+    sec.style.display = 'block';
+    list.innerHTML = groups[g].map((p,idx) => cardHTML({...p, status:g}, idx)).join('');
   });
 
-  // Resumen
   const urgent = groups.overdue.length + groups.critical.length + groups.warn.length;
   document.getElementById('sumUrgent').textContent = urgent;
+  const totalAmt = payments.reduce((s,p) => s+(parseFloat(p.amount)||0), 0);
+  document.getElementById('sumTotal').textContent =
+    `S/ ${totalAmt.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 
-  const totalAmount = payments.reduce((s, p) => s + (parseFloat(p.amount) || 0), 0);
-  document.getElementById('sumTotal').textContent = `S/ ${totalAmount.toLocaleString('es-PE', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
-
-  // Badge tab
   const badge = document.getElementById('badge-pending');
-  if (urgent > 0) {
-    badge.textContent = urgent;
-    badge.classList.add('visible');
-  } else {
-    badge.classList.remove('visible');
-  }
+  if (urgent>0) { badge.textContent=urgent; badge.classList.add('visible'); }
+  else badge.classList.remove('visible');
 
-  // Badge notif header
   document.getElementById('notifBadge').classList.toggle('visible',
-    groups.overdue.length > 0 || groups.critical.length > 0);
+    groups.overdue.length>0||groups.critical.length>0);
 }
 
-function paymentCardHTML(p) {
-  const icon = getPaymentIcon(p);
-  const daysText = getDaysText(p.days);
-  const amount = parseFloat(p.amount) || 0;
-  const amountStr = `S/ ${amount.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
-  const dueDateStr = formatDate(computeDueDate(p));
+function cardHTML(p, idx) {
+  const icon    = getIcon(p);
+  const daysT   = getDaysText(p.days);
+  const amt     = parseFloat(p.amount)||0;
+  const amtStr  = `S/ ${amt.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+  const dueStr  = formatDate(p.dueDate);
+  const delay   = `animation-delay:${idx*0.06}s`;
 
   return `
-  <div class="payment-card status-${p.status}" onclick="openEditModal('${p.id}')">
+  <div class="payment-card status-${p.status}" style="${delay}" onclick="openEditModal('${p.id}')">
     <div class="card-top">
       <div class="card-left">
         <div class="card-icon">${icon}</div>
         <div class="card-info">
           <div class="card-name">${escHtml(p.name)}</div>
-          <div class="card-category">${getCategoryLabel(p)}</div>
+          <div class="card-category">${getCatLabel(p)}</div>
         </div>
       </div>
       <div class="card-right">
-        <div class="card-amount">${amountStr}</div>
-        <div class="card-due">${dueDateStr}</div>
+        <div class="card-amount">${amtStr}</div>
+        <div class="card-due">${dueStr}</div>
       </div>
     </div>
     <div class="card-bottom">
-      <div class="status-pill">
-        <span class="dot"></span>
-        ${daysText}
-      </div>
+      <div class="status-pill"><span class="dot"></span>${daysT}</div>
       <div class="card-actions" onclick="event.stopPropagation()">
-        <button class="btn-icon pay-btn" title="Marcar como pagado"
-          onclick="markPaid('${p.id}')">✓</button>
-        <button class="btn-icon" title="Editar"
-          onclick="openEditModal('${p.id}')">✏️</button>
-        <button class="btn-icon del-btn" title="Eliminar"
-          onclick="deletePayment('${p.id}')">🗑️</button>
+        <button class="btn-icon pay-btn"  title="Pagado"  onclick="markPaid('${p.id}')">✓</button>
+        <button class="btn-icon edit-btn" title="Editar"  onclick="openEditModal('${p.id}')">✏️</button>
+        <button class="btn-icon del-btn"  title="Borrar"  onclick="deletePayment('${p.id}')">🗑️</button>
       </div>
     </div>
-    ${p.notes ? `<div style="margin-top:8px;font-size:11px;color:var(--text-muted);padding-left:50px">${escHtml(p.notes)}</div>` : ''}
+    ${p.notes?`<div style="margin-top:8px;font-size:11px;color:var(--txt3);padding-left:56px">${escHtml(p.notes)}</div>`:''}
   </div>`;
 }
 
 function renderPaid() {
-  const list = document.getElementById('list-paid');
+  const list  = document.getElementById('list-paid');
   const empty = document.getElementById('emptyPaid');
-
-  if (paidList.length === 0) {
-    list.innerHTML = '';
-    empty.style.display = 'flex';
-    return;
-  }
-
-  empty.style.display = 'none';
-
-  // Ordenar por fecha de pago descendente
-  const sorted = [...paidList].sort((a,b) => new Date(b.paidAt) - new Date(a.paidAt));
-
+  if (paidList.length===0) { list.innerHTML=''; empty.style.display='flex'; return; }
+  empty.style.display='none';
+  const sorted = [...paidList].sort((a,b)=>new Date(b.paidAt)-new Date(a.paidAt));
   list.innerHTML = sorted.map(p => {
-    const icon = getPaymentIcon(p);
-    const amount = parseFloat(p.amount) || 0;
-    const paidDate = new Date(p.paidAt).toLocaleDateString('es-PE',{day:'2-digit',month:'short',year:'numeric'});
+    const icon = getIcon(p);
+    const amt  = parseFloat(p.amount)||0;
+    const date = new Date(p.paidAt).toLocaleDateString('es-PE',{day:'2-digit',month:'short',year:'numeric'});
     return `
     <div class="paid-card">
       <div class="paid-card-icon">${icon}</div>
       <div class="paid-card-info">
         <div class="paid-card-name">${escHtml(p.name)}</div>
-        <div class="paid-card-meta">Pagado el ${paidDate} · ${getCategoryLabel(p)}</div>
+        <div class="paid-card-meta">Pagado el ${date} · ${getCatLabel(p)}</div>
       </div>
-      <div>
-        <div class="paid-card-amount">S/ ${amount.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
-        <button onclick="restorePayment('${p.id}')"
-          style="font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;margin-top:4px;display:block;text-align:right">
-          ↩ Restaurar
-        </button>
+      <div style="text-align:right">
+        <div class="paid-card-amount">S/ ${amt.toLocaleString('es-PE',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+        <button class="btn-restore" onclick="restorePayment('${p.id}')">↩ Restaurar</button>
       </div>
     </div>`;
   }).join('');
 }
 
 /* ==============================================
-   ICONOS Y ETIQUETAS
+   ICONOS / ETIQUETAS
 =============================================== */
-function getPaymentIcon(p) {
-  if (p.category === 'banco')     return '🏦';
-  if (p.category === 'servicio')  return SERVICE_ICONS[p.serviceType] || '💡';
-  if (p.category === 'educacion') return '🎓';
-  if (p.category === 'otro')      return OTRO_ICONS[p.otroType] || '📦';
+function getIcon(p) {
+  if (p.category==='banco')     return '🏦';
+  if (p.category==='servicio')  return SERVICE_ICONS[p.serviceType]||'💡';
+  if (p.category==='educacion') return '🎓';
+  if (p.category==='otro')      return OTRO_ICONS[p.otroType]||'📦';
   return '💳';
 }
-
-function getCategoryLabel(p) {
-  if (p.category === 'banco')     return 'Banco / Tarjeta de crédito';
-  if (p.category === 'servicio')  return `Servicio · ${p.serviceType || ''}`;
-  if (p.category === 'educacion') return `Educación · ${p.institution || ''}`;
-  if (p.category === 'otro')      return `${p.otroType || 'Otros'} · Suscripción`;
+function getCatLabel(p) {
+  if (p.category==='banco')     return 'Banco / Tarjeta de crédito';
+  if (p.category==='servicio')  return `Servicio · ${p.serviceType||''}`;
+  if (p.category==='educacion') return `Educación · ${p.institution||''}`;
+  if (p.category==='otro')      return `${p.otroType||'Otros'}`;
   return '';
 }
 
 /* ==============================================
-   TABS / NAVEGACIÓN
+   TABS
 =============================================== */
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn,.nav-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-
   document.getElementById(`tab-${tab}`).classList.add('active');
   document.getElementById(`nav-${tab}`).classList.add('active');
   document.getElementById(`view-${tab}`).classList.add('active');
-
-  // Mostrar/ocultar FAB
-  document.getElementById('fabBtn').style.display = tab === 'pending' ? 'flex' : 'none';
+  document.getElementById('fabBtn').style.display = tab==='pending' ? 'flex' : 'none';
 }
 
 /* ==============================================
-   MODAL: ABRIR / CERRAR
+   MODAL
 =============================================== */
 function openModal() {
-  editingId = null;
-  resetForm();
-  document.getElementById('modalTitle').textContent = 'Agregar pago';
-  document.getElementById('saveBtnText').textContent = '💾 Guardar';
+  editingId = null; resetForm();
+  document.getElementById('modalTitle').textContent   = 'Agregar pago';
+  document.getElementById('saveBtnText').textContent  = '💾 Guardar';
+  const nx = new Date(); nx.setMonth(nx.getMonth()+1);
+  const ds = nx.toISOString().split('T')[0];
+  document.getElementById('fServiceDue').value = ds;
+  document.getElementById('fOtroDue').value    = ds;
+  const nm = new Date().toISOString().slice(0,7);
+  document.getElementById('fEduStart').value   = nm;
   document.getElementById('modalOverlay').classList.add('open');
-  // Fecha por defecto para servicios y otros
-  const today2 = new Date();
-  today2.setMonth(today2.getMonth() + 1);
-  const yyyy = today2.getFullYear();
-  const mm   = String(today2.getMonth()+1).padStart(2,'0');
-  const dd   = String(today2.getDate()).padStart(2,'0');
-  document.getElementById('fServiceDue').value = `${yyyy}-${mm}-${dd}`;
-  document.getElementById('fOtroDue').value    = `${yyyy}-${mm}-${dd}`;
-  const yyyyNow = new Date().getFullYear();
-  const mmNow   = String(new Date().getMonth()+1).padStart(2,'0');
-  document.getElementById('fEduStart').value = `${yyyyNow}-${mmNow}`;
 }
-
 function openEditModal(id) {
-  const p = payments.find(x => x.id === id);
-  if (!p) return;
-
-  editingId = id;
-  resetForm();
+  const p = payments.find(x=>x.id===id); if (!p) return;
+  editingId=id; resetForm();
   document.getElementById('modalTitle').textContent  = 'Editar pago';
   document.getElementById('saveBtnText').textContent = '✏️ Actualizar';
-
-  document.getElementById('fName').value   = p.name || '';
-  document.getElementById('fAmount').value = p.amount || '';
-  document.getElementById('fNotes').value  = p.notes || '';
-
-  selectCat(p.category || 'banco');
-
-  if (p.category === 'banco') {
-    document.getElementById('fCutDay').value  = p.cutDay  || '';
-    document.getElementById('fTerm').value    = p.term    || 25;
-    document.getElementById('fGrace').value   = p.grace   || 0;
+  document.getElementById('fName').value   = p.name||'';
+  document.getElementById('fAmount').value = p.amount||'';
+  document.getElementById('fNotes').value  = p.notes||'';
+  selectCat(p.category||'banco');
+  if (p.category==='banco') {
+    document.getElementById('fCutDay').value = p.cutDay||'';
+    document.getElementById('fTerm').value   = p.term||25;
+    document.getElementById('fGrace').value  = p.grace||0;
     calcCreditDate();
-  } else if (p.category === 'servicio') {
-    document.getElementById('fServiceType').value  = p.serviceType  || 'luz';
-    document.getElementById('fServiceDue').value   = p.dueDate      || '';
-    document.getElementById('fServiceCycle').value = p.cycle        || 'monthly';
-  } else if (p.category === 'educacion') {
-    document.getElementById('fInstitution').value  = p.institution  || '';
-    document.getElementById('fEduDay').value       = p.eduDay       || '';
-    document.getElementById('fEduStart').value     = p.eduStart     || '';
-  } else if (p.category === 'otro') {
-    document.getElementById('fOtroType').value  = p.otroType  || 'streaming';
-    document.getElementById('fOtroDue').value   = p.dueDate   || '';
-    document.getElementById('fOtroCycle').value = p.cycle     || 'monthly';
+  } else if (p.category==='servicio') {
+    document.getElementById('fServiceType').value  = p.serviceType||'luz';
+    document.getElementById('fServiceDue').value   = p.dueDate||'';
+    document.getElementById('fServiceCycle').value = p.cycle||'monthly';
+  } else if (p.category==='educacion') {
+    document.getElementById('fInstitution').value = p.institution||'';
+    document.getElementById('fEduDay').value      = p.eduDay||'';
+    document.getElementById('fEduStart').value    = p.eduStart||'';
+  } else if (p.category==='otro') {
+    document.getElementById('fOtroType').value  = p.otroType||'streaming';
+    document.getElementById('fOtroDue').value   = p.dueDate||'';
+    document.getElementById('fOtroCycle').value = p.cycle||'monthly';
   }
-
   document.getElementById('modalOverlay').classList.add('open');
 }
-
-function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('open');
-  editingId = null;
-}
-
-function closeModalOnOverlay(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
-
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); editingId=null; }
+function closeModalOnOverlay(e) { if (e.target===document.getElementById('modalOverlay')) closeModal(); }
 function resetForm() {
-  document.getElementById('fName').value    = '';
-  document.getElementById('fAmount').value  = '';
-  document.getElementById('fNotes').value   = '';
-  document.getElementById('fCutDay').value  = '';
-  document.getElementById('fTerm').value    = 25;
-  document.getElementById('fGrace').value   = 0;
-  document.getElementById('fInstitution').value = '';
-  document.getElementById('fEduDay').value  = '';
+  ['fName','fAmount','fNotes','fInstitution','fEduDay'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('fCutDay').value=''; document.getElementById('fTerm').value=25; document.getElementById('fGrace').value=0;
   document.getElementById('calcResult').classList.remove('visible');
   selectCat('banco');
 }
-
-/* ==============================================
-   SELECCIÓN DE CATEGORÍA
-=============================================== */
 function selectCat(cat) {
   selectedCategory = cat;
-
-  // Chips
-  document.querySelectorAll('.cat-chip').forEach(c => {
-    c.classList.toggle('selected', c.dataset.cat === cat);
-  });
-
-  // Mostrar/ocultar campos
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.toggle('selected', c.dataset.cat===cat));
   ['banco','servicio','educacion','otro'].forEach(c => {
-    const el = document.getElementById(`fields-${c}`);
-    if (el) el.classList.toggle('hidden', c !== cat);
+    document.getElementById(`fields-${c}`).classList.toggle('hidden', c!==cat);
   });
 }
 
 /* ==============================================
-   GUARDAR / ACTUALIZAR PAGO
+   GUARDAR PAGO
 =============================================== */
 function savePayment() {
   const name   = document.getElementById('fName').value.trim();
-  const amount = parseFloat(document.getElementById('fAmount').value) || 0;
+  const amount = parseFloat(document.getElementById('fAmount').value)||0;
   const notes  = document.getElementById('fNotes').value.trim();
   const cat    = selectedCategory;
+  if (!name) { showToast('⚠️ Ingresa un nombre', 'error'); return; }
 
-  if (!name) {
-    showToast('⚠️ Ingresa un nombre para el pago', 'error');
-    document.getElementById('fName').focus();
-    return;
-  }
-
-  let payment = {
-    id:       editingId || genId(),
-    name,
-    amount,
-    notes,
-    category: cat,
-    createdAt: editingId
-      ? (payments.find(x=>x.id===editingId)?.createdAt || new Date().toISOString())
-      : new Date().toISOString()
+  let p = {
+    id: editingId||genId(), name, amount, notes, category: cat,
+    createdAt: editingId ? (payments.find(x=>x.id===editingId)?.createdAt||new Date().toISOString()) : new Date().toISOString()
   };
 
-  if (cat === 'banco') {
+  if (cat==='banco') {
     const cutDay = parseInt(document.getElementById('fCutDay').value);
-    const term   = parseInt(document.getElementById('fTerm').value) || 25;
-    const grace  = parseInt(document.getElementById('fGrace').value) || 0;
-
-    if (!cutDay) {
-      showToast('⚠️ Ingresa el día de corte', 'error');
-      return;
-    }
-
-    payment.cutDay  = cutDay;
-    payment.term    = term;
-    payment.grace   = grace;
-    payment.dueDate = document.getElementById('fCutDay').dataset.limit || computeBankDue(cutDay, term, grace);
-
-  } else if (cat === 'servicio') {
+    if (!cutDay) { showToast('⚠️ Ingresa el día de corte', 'error'); return; }
+    p.cutDay=cutDay; p.term=parseInt(document.getElementById('fTerm').value)||25; p.grace=parseInt(document.getElementById('fGrace').value)||0;
+    p.dueDate = document.getElementById('fCutDay').dataset.limit||computeBankDue(p.cutDay,p.term,p.grace);
+  } else if (cat==='servicio') {
     const due = document.getElementById('fServiceDue').value;
-    if (!due) { showToast('⚠️ Ingresa la fecha de vencimiento', 'error'); return; }
-    payment.serviceType = document.getElementById('fServiceType').value;
-    payment.dueDate     = due;
-    payment.cycle       = document.getElementById('fServiceCycle').value;
-
-  } else if (cat === 'educacion') {
-    const eduDay   = parseInt(document.getElementById('fEduDay').value);
-    const eduStart = document.getElementById('fEduStart').value;
-    if (!eduDay) { showToast('⚠️ Ingresa el día de vencimiento mensual', 'error'); return; }
-    payment.institution = document.getElementById('fInstitution').value.trim();
-    payment.eduDay      = eduDay;
-    payment.eduStart    = eduStart;
-    payment.dueDate     = computeEduDue(eduDay);
-
-  } else if (cat === 'otro') {
+    if (!due) { showToast('⚠️ Ingresa la fecha', 'error'); return; }
+    p.serviceType=document.getElementById('fServiceType').value; p.dueDate=due; p.cycle=document.getElementById('fServiceCycle').value;
+  } else if (cat==='educacion') {
+    const eduDay = parseInt(document.getElementById('fEduDay').value);
+    if (!eduDay) { showToast('⚠️ Ingresa el día mensual', 'error'); return; }
+    p.institution=document.getElementById('fInstitution').value.trim(); p.eduDay=eduDay;
+    p.eduStart=document.getElementById('fEduStart').value; p.dueDate=computeEduDue(eduDay);
+  } else if (cat==='otro') {
     const due = document.getElementById('fOtroDue').value;
-    if (!due) { showToast('⚠️ Ingresa la fecha de vencimiento', 'error'); return; }
-    payment.otroType = document.getElementById('fOtroType').value;
-    payment.dueDate  = due;
-    payment.cycle    = document.getElementById('fOtroCycle').value;
+    if (!due) { showToast('⚠️ Ingresa la fecha', 'error'); return; }
+    p.otroType=document.getElementById('fOtroType').value; p.dueDate=due; p.cycle=document.getElementById('fOtroCycle').value;
   }
 
-  if (editingId) {
-    const idx = payments.findIndex(x => x.id === editingId);
-    if (idx >= 0) payments[idx] = payment;
-    showToast('✅ Pago actualizado');
-  } else {
-    payments.unshift(payment);
-    showToast('✅ Pago guardado');
-  }
+  if (editingId) { const i=payments.findIndex(x=>x.id===editingId); if(i>=0) payments[i]=p; showToast('✅ Pago actualizado'); }
+  else           { payments.unshift(p); showToast('✅ Pago guardado'); }
 
-  saveData();
-  renderAll();
-  closeModal();
-  scheduleLocalReminder();
+  saveData(); renderAll(); closeModal(); scheduleLocalReminder();
 }
 
 function computeBankDue(cutDay, term, grace) {
-  const now = new Date();
-  let cutDate = new Date(now.getFullYear(), now.getMonth(), cutDay);
-  if (cutDate <= now) cutDate = new Date(now.getFullYear(), now.getMonth()+1, cutDay);
-  const limitDate = new Date(cutDate);
-  limitDate.setDate(limitDate.getDate() + term + grace);
-  return limitDate.toISOString().split('T')[0];
+  const now=new Date(); let cut=new Date(now.getFullYear(),now.getMonth(),cutDay);
+  if(cut<=now) cut=new Date(now.getFullYear(),now.getMonth()+1,cutDay);
+  const lim=new Date(cut); lim.setDate(lim.getDate()+term+grace);
+  return lim.toISOString().split('T')[0];
 }
-
 function computeEduDue(day) {
-  const now = new Date();
-  let due = new Date(now.getFullYear(), now.getMonth(), day);
-  if (due <= now) due = new Date(now.getFullYear(), now.getMonth()+1, day);
-  return due.toISOString().split('T')[0];
+  const now=new Date(); let d=new Date(now.getFullYear(),now.getMonth(),day);
+  if(d<=now) d=new Date(now.getFullYear(),now.getMonth()+1,day);
+  return d.toISOString().split('T')[0];
 }
 
 /* ==============================================
-   MARCAR COMO PAGADO / RESTAURAR / ELIMINAR
+   ACCIONES
 =============================================== */
 function markPaid(id) {
-  const idx = payments.findIndex(x => x.id === id);
-  if (idx < 0) return;
-
-  const p = { ...payments[idx], paidAt: new Date().toISOString() };
-  paidList.unshift(p);
-  payments.splice(idx, 1);
-
-  saveData();
-  renderAll();
-  showToast('✅ ¡Pago registrado como pagado!', 'success');
+  const i=payments.findIndex(x=>x.id===id); if(i<0) return;
+  paidList.unshift({...payments[i], paidAt:new Date().toISOString()});
+  payments.splice(i,1); saveData(); renderAll(); showToast('✅ ¡Pago registrado!','success');
 }
-
 function restorePayment(id) {
-  const idx = paidList.findIndex(x => x.id === id);
-  if (idx < 0) return;
-
-  const p = { ...paidList[idx] };
-  delete p.paidAt;
-  payments.unshift(p);
-  paidList.splice(idx, 1);
-
-  saveData();
-  renderAll();
-  showToast('↩ Pago restaurado a pendientes');
+  const i=paidList.findIndex(x=>x.id===id); if(i<0) return;
+  const p={...paidList[i]}; delete p.paidAt;
+  payments.unshift(p); paidList.splice(i,1); saveData(); renderAll(); showToast('↩ Pago restaurado');
 }
-
 function deletePayment(id) {
-  if (!confirm('¿Eliminar este pago definitivamente?')) return;
-  payments = payments.filter(x => x.id !== id);
-  saveData();
-  renderAll();
-  showToast('🗑️ Pago eliminado');
+  if(!confirm('¿Eliminar este pago definitivamente?')) return;
+  payments=payments.filter(x=>x.id!==id); saveData(); renderAll(); showToast('🗑️ Eliminado');
 }
 
 /* ==============================================
-   RENOVACIÓN AUTOMÁTICA DE FECHAS CÍCLICAS
+   RENOVACIÓN AUTOMÁTICA
 =============================================== */
 function autoRenewDates() {
-  let changed = false;
-  const todayStr = today().toISOString().split('T')[0];
-
+  let changed=false;
+  const todayStr=today().toISOString().split('T')[0];
   payments.forEach(p => {
-    if (!p.dueDate || p.dueDate >= todayStr) return;
-
-    if (p.category === 'banco') {
-      p.dueDate = computeBankDue(p.cutDay, p.term, p.grace);
-      changed = true;
-    } else if (p.category === 'educacion' && p.eduDay) {
-      p.dueDate = computeEduDue(p.eduDay);
-      changed = true;
-    } else if ((p.category === 'servicio' || p.category === 'otro') && p.cycle === 'monthly') {
-      const old = new Date(p.dueDate + 'T00:00:00');
-      old.setMonth(old.getMonth() + 1);
-      p.dueDate = old.toISOString().split('T')[0];
-      changed = true;
-    } else if ((p.category === 'servicio' || p.category === 'otro') && p.cycle === 'bimonthly') {
-      const old = new Date(p.dueDate + 'T00:00:00');
-      old.setMonth(old.getMonth() + 2);
-      p.dueDate = old.toISOString().split('T')[0];
-      changed = true;
-    } else if ((p.category === 'servicio' || p.category === 'otro') && p.cycle === 'annual') {
-      const old = new Date(p.dueDate + 'T00:00:00');
-      old.setFullYear(old.getFullYear() + 1);
-      p.dueDate = old.toISOString().split('T')[0];
-      changed = true;
-    }
+    if(!p.dueDate||p.dueDate>=todayStr) return;
+    if (p.category==='banco') { p.dueDate=computeBankDue(p.cutDay,p.term,p.grace); changed=true; }
+    else if (p.category==='educacion'&&p.eduDay) { p.dueDate=computeEduDue(p.eduDay); changed=true; }
+    else if (p.cycle==='monthly')   { const d=new Date(p.dueDate+'T00:00:00'); d.setMonth(d.getMonth()+1);   p.dueDate=d.toISOString().split('T')[0]; changed=true; }
+    else if (p.cycle==='bimonthly') { const d=new Date(p.dueDate+'T00:00:00'); d.setMonth(d.getMonth()+2);   p.dueDate=d.toISOString().split('T')[0]; changed=true; }
+    else if (p.cycle==='annual')    { const d=new Date(p.dueDate+'T00:00:00'); d.setFullYear(d.getFullYear()+1); p.dueDate=d.toISOString().split('T')[0]; changed=true; }
   });
-
-  if (changed) { saveData(); renderAll(); }
+  if(changed) { saveData(); renderAll(); }
 }
-
-// Revisar renovación al cargar
-setTimeout(autoRenewDates, 1000);
 
 /* ==============================================
    NOTIFICACIONES
 =============================================== */
 async function requestNotifPermission() {
-  if (!('Notification' in window)) {
-    showToast('⚠️ Tu navegador no soporta notificaciones');
-    return false;
-  }
-
-  if (Notification.permission === 'granted') return true;
-  if (Notification.permission === 'denied') {
-    showToast('⚠️ Notificaciones bloqueadas. Habilítalas en ajustes del navegador.');
-    return false;
-  }
-
-  const result = await Notification.requestPermission();
-  return result === 'granted';
+  if(!('Notification' in window)) { showToast('⚠️ Tu navegador no soporta notificaciones'); return false; }
+  if(Notification.permission==='granted') return true;
+  if(Notification.permission==='denied')  { showToast('⚠️ Notificaciones bloqueadas en ajustes'); return false; }
+  return (await Notification.requestPermission())==='granted';
 }
-
 function checkAndNotify() {
-  if (!config.notifEnabled || Notification.permission !== 'granted') return;
-
-  const critical = payments.filter(p => {
-    const days = daysUntil(computeDueDate(p));
-    return days !== null && days <= 1 && days >= 0;
-  });
-
-  const overdue = payments.filter(p => {
-    const days = daysUntil(computeDueDate(p));
-    return days !== null && days < 0;
-  });
-
-  if (overdue.length > 0) {
-    sendNotification(
-      '🔴 Pagos vencidos',
-      `Tienes ${overdue.length} pago${overdue.length>1?'s':''} vencido${overdue.length>1?'s':''}: ${overdue.map(p=>p.name).join(', ')}`
-    );
-  } else if (critical.length > 0) {
-    sendNotification(
-      '🟠 Pago urgente',
-      `Vence mañana: ${critical.map(p=>p.name).join(', ')}`
-    );
-  }
+  if(!config.notifEnabled||Notification.permission!=='granted') return;
+  const overdue  = payments.filter(p => (daysUntil(p.dueDate)??1) < 0);
+  const critical = payments.filter(p => { const d=daysUntil(p.dueDate); return d!==null&&d<=1&&d>=0; });
+  if (overdue.length>0) sendNotif('🔴 Pagos vencidos', `${overdue.length} pago${overdue.length>1?'s':''} vencido${overdue.length>1?'s':''}: ${overdue.map(p=>p.name).join(', ')}`);
+  else if (critical.length>0) sendNotif('🟠 Pago urgente', `Vence mañana: ${critical.map(p=>p.name).join(', ')}`);
 }
-
-function sendNotification(title, body) {
-  if (Notification.permission !== 'granted') return;
-
-  // Intentar via Service Worker para background
-  if (navigator.serviceWorker?.controller) {
-    navigator.serviceWorker.controller.postMessage({
-      type: 'SHOW_NOTIFICATION',
-      title,
-      body,
-      icon: '/icon-192.png',
-      tag:  'mis-pagos-alert'
-    });
+function sendNotif(title, body) {
+  if(Notification.permission!=='granted') return;
+  if(navigator.serviceWorker?.controller) {
+    navigator.serviceWorker.controller.postMessage({ type:'SHOW_NOTIFICATION', title, body, tag:'mis-pagos-alert' });
   } else {
-    // Fallback: notificación directa
-    new Notification(title, {
-      body,
-      icon:    'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💳</text></svg>',
-      badge:   'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💳</text></svg>',
-      tag:     'mis-pagos-alert',
-      vibrate: [200, 100, 200]
-    });
+    new Notification(title, { body, tag:'mis-pagos-alert', vibrate:[200,100,200] });
   }
 }
-
-/* ==============================================
-   RECORDATORIO DIARIO PROGRAMADO
-=============================================== */
 function scheduleLocalReminder() {
-  if (!config.notifEnabled) return;
-
-  const [h, m] = config.reminderTime.split(':').map(Number);
-  const now    = new Date();
-  const target = new Date();
-  target.setHours(h, m, 0, 0);
-
-  if (target <= now) target.setDate(target.getDate() + 1);
-
-  const delay = target - now;
-
-  // Limpiar anterior
-  if (window._reminderTimeout) clearTimeout(window._reminderTimeout);
-
-  window._reminderTimeout = setTimeout(() => {
-    checkAndNotify();
-    // Reprogramar para mañana
-    scheduleLocalReminder();
-  }, Math.min(delay, 2147483647)); // máx timeout JS ~24.8 días
+  if(!config.notifEnabled) return;
+  const [h,m]=config.reminderTime.split(':').map(Number);
+  const now=new Date(), target=new Date();
+  target.setHours(h,m,0,0);
+  if(target<=now) target.setDate(target.getDate()+1);
+  if(window._reminderTimeout) clearTimeout(window._reminderTimeout);
+  window._reminderTimeout=setTimeout(()=>{ checkAndNotify(); scheduleLocalReminder(); }, Math.min(target-now, 2147483647));
 }
 
 /* ==============================================
    SERVICE WORKER
 =============================================== */
 function registerServiceWorker() {
-  if (!('serviceWorker' in navigator)) return;
-
-  // Crear SW desde un Blob (archivo único)
-  const swCode = `
-const CACHE = 'mis-pagos-v1';
-const ASSETS = ['/'];
-
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(clients.claim());
-});
-
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
-});
-
-self.addEventListener('message', e => {
-  if (e.data?.type === 'SHOW_NOTIFICATION') {
-    self.registration.showNotification(e.data.title, {
-      body:    e.data.body,
-      icon:    e.data.icon || '',
-      tag:     e.data.tag  || 'mis-pagos',
-      vibrate: [200, 100, 200],
-      data:    { url: self.location.origin }
-    });
+  if(!('serviceWorker' in navigator)) return;
+  const sw=`
+const CACHE='mis-pagos-v2';
+self.addEventListener('install',e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['/']))); self.skipWaiting(); });
+self.addEventListener('activate',e=>{ e.waitUntil(clients.claim()); });
+self.addEventListener('fetch',e=>{ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))); });
+self.addEventListener('message',e=>{
+  if(e.data?.type==='SHOW_NOTIFICATION'){
+    self.registration.showNotification(e.data.title,{ body:e.data.body, tag:e.data.tag||'mis-pagos', vibrate:[200,100,200], data:{url:self.location.origin} });
   }
 });
-
-self.addEventListener('notificationclick', e => {
+self.addEventListener('notificationclick',e=>{
   e.notification.close();
-  e.waitUntil(
-    clients.matchAll({ type: 'window' }).then(list => {
-      if (list.length > 0) return list[0].focus();
-      return clients.openWindow(e.notification.data?.url || '/');
-    })
-  );
-});
-
-// Recordatorio diario via SW (cuando la app está cerrada)
-self.addEventListener('periodicsync', e => {
-  if (e.tag === 'mis-pagos-daily') {
-    e.waitUntil(checkPaymentsAndNotify());
-  }
-});
-
-async function checkPaymentsAndNotify() {
-  // Lee datos de IDB o cache
-  const allClients = await clients.matchAll({ includeUncontrolled: true });
-  if (allClients.length === 0) {
-    // App cerrada: no podemos leer localStorage directamente
-    // Mostrar recordatorio genérico
-    await self.registration.showNotification('💳 Mis Pagos', {
-      body: 'Revisa tus próximos vencimientos.',
-      tag:  'mis-pagos-daily'
-    });
-  }
-}
-  `;
-
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swURL = URL.createObjectURL(blob);
-
-  navigator.serviceWorker.register(swURL, { scope: '/' })
-    .then(reg => {
-      console.log('SW registrado');
-      // Periodic Sync (Chrome Android)
-      if ('periodicSync' in reg) {
-        navigator.permissions.query({ name: 'periodic-background-sync' })
-          .then(status => {
-            if (status.state === 'granted') {
-              reg.periodicSync.register('mis-pagos-daily', { minInterval: 86400000 });
-            }
-          }).catch(() => {});
-      }
-    })
-    .catch(err => console.warn('SW error:', err));
+  e.waitUntil(clients.matchAll({type:'window'}).then(l=>{ if(l.length>0) return l[0].focus(); return clients.openWindow(e.notification.data?.url||'/'); }));
+});`;
+  const url=URL.createObjectURL(new Blob([sw],{type:'application/javascript'}));
+  navigator.serviceWorker.register(url,{scope:'/'}).catch(()=>{});
 }
 
 /* ==============================================
@@ -2160,108 +1605,65 @@ async function checkPaymentsAndNotify() {
 =============================================== */
 function setupPWAInstall() {
   window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('installBanner').style.display = 'flex';
+    e.preventDefault(); deferredPrompt=e;
+    document.getElementById('installBanner').style.display='flex';
   });
-
   document.getElementById('installBtn').addEventListener('click', async () => {
-    if (!deferredPrompt) return;
+    if(!deferredPrompt) return;
     deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      document.getElementById('installBanner').style.display = 'none';
-      showToast('🎉 ¡App instalada!', 'success');
-    }
-    deferredPrompt = null;
+    const {outcome}=await deferredPrompt.userChoice;
+    if(outcome==='accepted') { document.getElementById('installBanner').style.display='none'; showToast('🎉 ¡App instalada!','success'); }
+    deferredPrompt=null;
   });
-
-  window.addEventListener('appinstalled', () => {
-    document.getElementById('installBanner').style.display = 'none';
-  });
+  window.addEventListener('appinstalled',()=>{ document.getElementById('installBanner').style.display='none'; });
 }
 
 /* ==============================================
-   EXPORTAR / IMPORTAR
+   EXPORT / IMPORT
 =============================================== */
 function exportData() {
-  const data = {
-    version:  '1.0',
-    exported: new Date().toISOString(),
-    payments,
-    paidList,
-    config
-  };
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href     = url;
-  a.download = `mis-pagos-respaldo-${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('📤 Datos exportados');
+  const data={version:'1.1',exported:new Date().toISOString(),payments,paidList,config};
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));
+  a.download=`mis-pagos-${new Date().toISOString().split('T')[0]}.json`;
+  a.click(); showToast('📤 Datos exportados');
 }
-
 function importData(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = ev => {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
     try {
-      const data = JSON.parse(ev.target.result);
-      if (!data.payments) throw new Error('Archivo inválido');
-      if (!confirm('¿Reemplazar todos los datos actuales con el respaldo?')) return;
-      payments = data.payments || [];
-      paidList = data.paidList || [];
-      config   = { ...config, ...(data.config || {}) };
-      saveData();
-      applyConfig();
-      renderAll();
-      showToast('📥 Datos importados correctamente', 'success');
-    } catch(err) {
-      showToast('⚠️ Archivo de respaldo inválido', 'error');
-    }
+      const data=JSON.parse(ev.target.result);
+      if(!data.payments) throw new Error('inválido');
+      if(!confirm('¿Reemplazar todos los datos con el respaldo?')) return;
+      payments=data.payments||[]; paidList=data.paidList||[]; config={...config,...(data.config||{})};
+      saveData(); applyConfig(); renderAll(); showToast('📥 Importado correctamente','success');
+    } catch { showToast('⚠️ Archivo inválido','error'); }
   };
-  reader.readAsText(file);
-  e.target.value = '';
+  reader.readAsText(file); e.target.value='';
 }
-
 function confirmClearAll() {
-  if (!confirm('¿Borrar TODOS los datos? Esta acción no se puede deshacer.')) return;
-  if (!confirm('¿Estás seguro? Se perderán todos tus pagos y configuración.')) return;
-  payments = [];
-  paidList = [];
-  config   = { warnDays: 7, reminderTime: '08:00', notifEnabled: false };
-  saveData();
-  applyConfig();
-  renderAll();
-  showToast('🗑️ Datos eliminados');
+  if(!confirm('¿Borrar TODOS los datos?')) return;
+  if(!confirm('¿Estás seguro? No se puede deshacer.')) return;
+  payments=[]; paidList=[]; config={warnDays:7,reminderTime:'08:00',notifEnabled:false};
+  saveData(); applyConfig(); renderAll(); showToast('🗑️ Datos eliminados');
 }
 
 /* ==============================================
-   UTILIDADES
+   UTILS
 =============================================== */
-function genId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+function genId() { return Date.now().toString(36)+Math.random().toString(36).substr(2,5); }
+function escHtml(s) {
+  if(!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
-
-function escHtml(str) {
-  if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-            .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+let _tt=null;
+function showToast(msg, type='info') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast show ${type}`;
+  if(_tt) clearTimeout(_tt);
+  _tt=setTimeout(()=>t.classList.remove('show'), 3000);
 }
-
-let toastTimer = null;
-function showToast(msg, type = 'info') {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.className   = `toast show ${type}`;
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
 </script>
-
 </body>
 </html>
