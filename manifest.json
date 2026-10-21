@@ -4,22 +4,40 @@
   "description": "Agenda inteligente de control de pagos y vencimientos",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f1117",
-  "theme_color": "#0f1117",
+  "background_color": "#0a0e1a",
+  "theme_color": "#0a0e1a",
   "orientation": "portrait-primary",
   "lang": "es",
   "icons": [
     {
-      "src": "icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "maskable"
+      "purpose": "any"
     }
   ],
   "categories": ["finance", "productivity"],
@@ -29,7 +47,7 @@
       "short_name": "Agregar",
       "description": "Registrar un nuevo pago",
       "url": "./index.html",
-      "icons": [{ "src": "icon.svg", "sizes": "any" }]
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
