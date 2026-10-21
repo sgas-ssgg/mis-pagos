@@ -27,17 +27,36 @@
         promptOptions: {
           slidedown: {
             prompts: [{
-              type:   "push",
-              autoPrompt: false,
+              type: "push",
+              autoPrompt: true,
               text: {
-                actionMessage:     "¿Quieres recibir alertas de tus pagos próximos a vencer?",
-                acceptButton:      "Sí, activar",
-                cancelButton:      "Ahora no"
+                actionMessage:  "¿Quieres recibir alertas de tus pagos próximos a vencer?",
+                acceptButton:   "✅ Sí, activar",
+                cancelButton:   "Ahora no"
+              },
+              delay: {
+                pageViews: 1,
+                timeDelay: 3
               }
             }]
           }
         }
       });
+
+      // Forzar el prompt inmediatamente si no está suscrito
+      const isSubscribed = await OneSignal.User.PushSubscription.optedIn;
+      if (!isSubscribed) {
+        setTimeout(async () => {
+          try {
+            await OneSignal.Slidedown.promptPush({ force: true });
+          } catch(e) {
+            // Fallback: pedir permiso nativo del navegador
+            if (Notification.permission === 'default') {
+              Notification.requestPermission();
+            }
+          }
+        }, 3000);
+      }
     });
   </script>
   <style>
