@@ -12,6 +12,34 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" type="image/svg+xml" href="icon.svg" />
   <link rel="apple-touch-icon" href="icon.svg" />
+
+  <!-- OneSignal SDK -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "bb908b2b-c383-4eec-8a0a-381ede2c5f64",
+        safari_web_id: "",
+        notifyButton: { enable: false },
+        allowLocalhostAsSecureOrigin: true,
+        serviceWorkerPath: "OneSignalSDKWorker.js",
+        promptOptions: {
+          slidedown: {
+            prompts: [{
+              type:   "push",
+              autoPrompt: false,
+              text: {
+                actionMessage:     "¿Quieres recibir alertas de tus pagos próximos a vencer?",
+                acceptButton:      "Sí, activar",
+                cancelButton:      "Ahora no"
+              }
+            }]
+          }
+        }
+      });
+    });
+  </script>
   <style>
     /* ============================
        FUENTE GOOGLE (inline import)
@@ -1544,29 +1572,63 @@ function autoRenewDates() {
 }
 
 /* ==============================================
-   NOTIFICACIONES
+   NOTIFICACIONES (OneSignal + fallback local)
 =============================================== */
 async function requestNotifPermission() {
-  if(!('Notification' in window)) { showToast('⚠️ Tu navegador no soporta notificaciones'); return false; }
-  if(Notification.permission==='granted') return true;
-  if(Notification.permission==='denied')  { showToast('⚠️ Notificaciones bloqueadas en ajustes'); return false; }
-  return (await Notification.requestPermission())==='granted';
+  // OneSignal slidedown
+  if (window.OneSignalDeferred && window.OneSignal) {
+    try {
+      await OneSignal.Slidedown.promptPush();
+      return true;
+    } catch(e) {}
+  }
+  // Fallback nativo
+  if (!('Notification' in window)) { showToast('⚠️ Tu navegador no soporta notificaciones'); return false; }
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied')  { showToast('⚠️ Notificaciones bloqueadas. Actívalas en ajustes del navegador.'); return false; }
+  return (await Notification.requestPermission()) === 'granted';
 }
+
 function checkAndNotify() {
-  if(!config.notifEnabled||Notification.permission!=='granted') return;
-  const overdue  = payments.filter(p => (daysUntil(p.dueDate)??1) < 0);
-  const critical = payments.filter(p => { const d=daysUntil(p.dueDate); return d!==null&&d<=1&&d>=0; });
-  if (overdue.length>0) sendNotif('🔴 Pagos vencidos', `${overdue.length} pago${overdue.length>1?'s':''} vencido${overdue.length>1?'s':''}: ${overdue.map(p=>p.name).join(', ')}`);
-  else if (critical.length>0) sendNotif('🟠 Pago urgente', `Vence mañana: ${critical.map(p=>p.name).join(', ')}`);
-}
-function sendNotif(title, body) {
-  if(Notification.permission!=='granted') return;
-  if(navigator.serviceWorker?.controller) {
-    navigator.serviceWorker.controller.postMessage({ type:'SHOW_NOTIFICATION', title, body, tag:'mis-pagos-alert' });
-  } else {
-    new Notification(title, { body, tag:'mis-pagos-alert', vibrate:[200,100,200] });
+  if (!config.notifEnabled) return;
+  const overdue  = payments.filter(p => (daysUntil(p.dueDate) ?? 1) < 0);
+  const critical = payments.filter(p => { const d = daysUntil(p.dueDate); return d !== null && d <= 1 && d >= 0; });
+  const warn     = payments.filter(p => { const d = daysUntil(p.dueDate); return d !== null && d > 1 && d <= config.warnDays; });
+
+  if (overdue.length > 0) {
+    sendNotif('🔴 Pagos vencidos — Mis Pagos',
+      `${overdue.length} pago${overdue.length>1?'s':''} vencido${overdue.length>1?'s':''}: ${overdue.map(p=>p.name).join(', ')}`);
+  } else if (critical.length > 0) {
+    sendNotif('🟠 ¡Pago urgente! — Mis Pagos',
+      `Vence hoy/mañana: ${critical.map(p=>p.name).join(', ')}`);
+  } else if (warn.length > 0) {
+    sendNotif('🟡 Pagos próximos — Mis Pagos',
+      `${warn.length} pago${warn.length>1?'s':''} próximo${warn.length>1?'s':''}: ${warn.map(p=>p.name).join(', ')}`);
   }
 }
+
+function sendNotif(title, body) {
+  // Notificación local via SW (funciona en background con PWA instalada)
+  navigator.serviceWorker?.ready.then(reg => {
+    reg.showNotification(title, {
+      body,
+      tag:     'mis-pagos-alert',
+      icon:    './icon.svg',
+      badge:   './icon.svg',
+      vibrate: [200, 100, 200],
+      data:    { url: location.href },
+      actions: [
+        { action: 'open',    title: '📋 Ver pagos' },
+        { action: 'dismiss', title: 'Cerrar' }
+      ]
+    });
+  }).catch(() => {
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body, tag: 'mis-pagos-alert' });
+    }
+  });
+}
+
 function scheduleLocalReminder() {
   if (!config.notifEnabled) return;
   const [h, m] = config.reminderTime.split(':').map(Number);
@@ -1575,24 +1637,20 @@ function scheduleLocalReminder() {
   if (target <= now) target.setDate(target.getDate() + 1);
   const delay = target - now;
 
-  // Timer JS (funciona mientras la app está en memoria)
+  // Timer JS local
   if (window._reminderTimeout) clearTimeout(window._reminderTimeout);
   window._reminderTimeout = setTimeout(() => {
     checkAndNotify();
     scheduleLocalReminder();
   }, Math.min(delay, 2147483647));
 
-  // También enviar al SW para que funcione cuando la app está cerrada
+  // Enviar al SW para background
   navigator.serviceWorker?.ready.then(reg => {
     if (reg.active) {
-      const urgent = payments.filter(p => {
-        const d = daysUntil(p.dueDate);
-        return d !== null && d <= config.warnDays;
-      });
+      const urgent = payments.filter(p => { const d = daysUntil(p.dueDate); return d !== null && d <= config.warnDays; });
       const body = urgent.length > 0
-        ? `Tienes ${urgent.length} pago${urgent.length > 1 ? 's' : ''} próximo${urgent.length > 1 ? 's' : ''} a vencer.`
+        ? `Tienes ${urgent.length} pago${urgent.length>1?'s':''} próximo${urgent.length>1?'s':''} a vencer.`
         : 'Revisa tus próximos vencimientos.';
-
       reg.active.postMessage({ type: 'SCHEDULE_REMINDER', delay, body });
     }
   }).catch(() => {});
